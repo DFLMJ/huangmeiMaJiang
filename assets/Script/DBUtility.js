@@ -86,6 +86,27 @@ var DBUtility = {
         return ccNode;
     },
     /**
+     *缩放窗口并加入特殊动画
+     *需要指定背景隔离层为modalBg
+     *
+     * @param {*} e 点击事件的对象
+     * @param {*} target 点击事件传递的模态框名字
+     */
+    fnScale(e, target) {
+        this[target].active=true;
+        this[target].runAction(cc.sequence(cc.scaleTo(0.1, 1.2, 1.2), cc.scaleTo(0.1, 1, 1)));
+        this.modalBg.active = true;
+    },
+    /**
+     * 给关闭按钮添加监听事件
+     *
+     * @param {*} e
+     */
+    fnCloseBtn(e){
+        e.target.parent.active=false;        
+        this.modalBg.active = false;
+    },
+    /**
      * 提示语窗口
      * @method fnShowTips
      * @param {String} Txt Txt内容
