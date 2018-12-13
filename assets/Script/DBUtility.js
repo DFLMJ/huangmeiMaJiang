@@ -49,7 +49,7 @@ var DBUtility = {
         return null;
     },
     /**
-    * 加载图像URL
+    * 加载远程图像URL
     * @method loadUrl
     * @param {String} Path 图片地址
     * @param {Node} Node  需要更改spriteFrame 的节点
@@ -61,6 +61,19 @@ var DBUtility = {
         }
         cc.loader.load({ url: Path, type: Type || 'png' }, (e, texture) => {
             Node.getComponent(cc.Sprite).spriteFrame = new cc.SpriteFrame(texture);
+        });
+    },
+
+    /**
+     *加载位于 resources 文件夹下的资源
+     *
+     * @param {*} Path 图片地址
+     * @param {*} Node 需要更改的spriteFrame节点
+     * @param {*} [Type=cc.SpriteFrame] 资源类型，默认为cc.SpriteFrame
+     */
+    loadRes(Path, Node, Type=cc.SpriteFrame){
+        cc.loader.loadRes(Path, Type, function (err, spriteFrame) {
+            Node.getComponent(cc.Sprite).spriteFrame = spriteFrame;
         });
     },
     /**
@@ -94,7 +107,7 @@ var DBUtility = {
      */
     fnScale(e, target) {
         this[target].active=true;
-        this[target].runAction(cc.sequence(cc.scaleTo(0.1, 1.2, 1.2), cc.scaleTo(0.1, 1, 1)));
+        this[target].runAction(cc.sequence(cc.scaleTo(0.1, 1.1, 1.2), cc.scaleTo(0.1, 1, 1)));
         this.modalBg.active = true;
     },
     /**
@@ -120,7 +133,27 @@ var DBUtility = {
         // 执行动作
         str.parent.runAction(ani);
     },
-    
+    /**
+     *生成列表预制体
+     *
+     * @param {cc.Node} target 预制体的父节点
+     * @param {cc.Prefab} pre 需要创建的预制体
+     * @param {Array} data 需要遍历的数据
+     * @param {Function} callBack 传入data、item元素
+     */
+    fnCreateItem(target, pre, data, callBack) {
+        target.children.forEach((item, i) => {
+            console.log(i, 'p');
+            // item.parent=null;
+            item.destroy();
+        })
+        for (let index = 0; index < (data.len?data.len: data.length); index++) {
+            const item = cc.instantiate(pre);
+            callBack(data[index], item);
+            item.parent = target;
+        }
+    },
+
 
 }
 

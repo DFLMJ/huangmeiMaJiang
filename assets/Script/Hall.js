@@ -1,4 +1,4 @@
-let DBU = require('DBUtility');
+const DBU = require('DBUtility');
 
 cc.Class({
     extends: cc.Component,
@@ -125,6 +125,7 @@ cc.Class({
             type: cc.Node,
             displayName: '兑换'
         },
+       
         rule: {
             default: null,
             type: cc.Node,
@@ -160,8 +161,14 @@ cc.Class({
             type: cc.Node,
             displayName: '背景阻隔层'
         },
-        storeClassName: '',
+        CloseBtn: {
+            default: [],
+            type: cc.Node,
+            displayName: '关闭按钮集合'
+        },
+        
 
+        storeClassName: '',
         // : {
         //     default: null,
         //     type: cc.Node,
@@ -193,11 +200,13 @@ cc.Class({
             yb: 5658
         }
         //循环遍历添加点击事件
-        let touchArr = [this.storeCloseBtn]
-        touchArr.forEach(item => {
-            console.log(touchArr);
+        // let touchArr = [this.storeCloseBtn]
+        this.CloseBtn.forEach((item, i) => {
 
-            item.on('touchstart', DBU.fnCloseBtn.bind(this))
+            if (item) {
+                item.on('touchstart', DBU.fnCloseBtn.bind(this))
+            };
+
         })
 
 
@@ -234,55 +243,30 @@ cc.Class({
      */
     fnStore(e) {
         this.storeClass.forEach(item => {
-
-            let child = item.getChildByName('spr'),name=e ? e.target.name : 'gold';
-            // console.log(item.name===(e?e.touch.name:'gold'));
-            // if (e) {
-            //     console.log(55,e);
-
-            // }
-
+            let child = item.getChildByName('spr'), name = e ? e.target.name : 'gold';
             if (item.name == name) {
-                // console.log(111,e);
-
                 child.active = true;
-               this.fnCreateItem(this.store.getChildByName('scrollview').getChildByName('view').getChildByName('content'),this.storeItem,[{title:name,money:662,img:'fk1'}])
+                DBU.fnCreateItem(this.store.getChildByName('scrollview').getChildByName('view').getChildByName('content'),
+                    this.storeItem, [{ title: name, money: 662, img: 'fk1' },{ title: `${name}*3`, money: 13, img: 'fk2' }],
+                    (data,itemi) => {
+                        const item = itemi.getChildByName('bg');
+                        DBU.loadRes('/store/' + data.img, item.getChildByName('spr'));
+                        DBU.loadTxt(data.title, item.getChildByName('title').getChildByName('str'));
+                        DBU.loadTxt(data.money, item.getChildByName('btn').getChildByName('str'));
+                    })
             } else {
                 child.active = false;
             }
         })
 
     },
+    fnConversion(){
+      
+        
+    },
 
-    /**
-     生成列表预制体
-     *
-     * @param {*} target
-     * @param {*} pre
-     * @param {*} data
-     */
-    fnCreateItem(target, pre, data) {
-        target.children.forEach((item,i)=>{
-            console.log(i,'p');
-            
-            // item.parent=null;
-            item.destroy();
-        })
-        for (let index = 0; index < data.length; index++) {
-            const itemi = cc.instantiate(pre), item = itemi.getChildByName('bg');
-            // DBU.loadUrl('Texture/store/' + data[index].img, item.getChildByName('spr'));
-            // var self = this;
-cc.loader.loadRes('/store/' + data[index].img,cc.SpriteFrame, function (err, ss) {
-    item.getChildByName('spr').getComponent(cc.Sprite).spriteFrame = ss;
-});
+    
 
-            // DBU.loadUrl(' https://iknowpc.bdimg.com/static/common/pkg/common_z.75a813d.png', item.getChildByName('spr'));
-            console.log(data[index].title,item.getChildByName('title').getChildByName('str').getComponent(cc.Label).string);
-            DBU.loadTxt(data[index].title, item.getChildByName('title').getChildByName('str'))
-            DBU.loadTxt(data[index].money,item.getChildByName('btn').getChildByName('str'));            
-            itemi.parent = target;
-        }
-    }
 
     // start() {
 
