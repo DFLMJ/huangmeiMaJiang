@@ -125,7 +125,7 @@ cc.Class({
             type: cc.Node,
             displayName: '兑换'
         },
-       
+
         rule: {
             default: null,
             type: cc.Node,
@@ -166,7 +166,11 @@ cc.Class({
             type: cc.Node,
             displayName: '关闭按钮集合'
         },
-        
+        submodule: {
+            default: null,
+            type: cc.Node,
+            displayName: '提交模态框'
+        },
 
         storeClassName: '',
         // : {
@@ -209,7 +213,32 @@ cc.Class({
 
         })
 
+        // 兑换
+        this.fnPrepaidCalls()
 
+
+
+    },
+    // --------------兑换充值卡-----whiteBox
+    fnPrepaidCalls() {
+        // 话费充值窗口
+        this.submodule.getChildByName('prepaidCalls').on('prepaidCalls', e => {
+            console.log(e, 555);
+        })
+        this.submodule.getChildByName('prepaidCalls').getChildByName('ModalClose').on('touchstart', e => {
+            e.target.parent.active = false;
+            e.target.parent.parent.active = false;
+        })
+        let prepaidCallsNum = 0, phoneNum = this.submodule.getChildByName('prepaidCalls').getChildByName('whiteBox').getChildByName('str');
+        // 试用全局事件 监听
+        cc.director.GlobalEvent.on('prepaidCalls', e => {
+            prepaidCallsNum = e.num;
+        }, this.submodule.getChildByName('prepaidCalls'))
+        this.submodule.getChildByName('prepaidCalls').getChildByName('yesBtn').on('touchstart', e => {
+
+            // 调用支付方法
+            console.log(prepaidCallsNum, phoneNum.getComponent(cc.EditBox).string, '您提交了支付');
+        })
     },
 
 
@@ -247,8 +276,8 @@ cc.Class({
             if (item.name == name) {
                 child.active = true;
                 DBU.fnCreateItem(this.store.getChildByName('scrollview').getChildByName('view').getChildByName('content'),
-                    this.storeItem, [{ title: name, money: 662, img: 'fk1' },{ title: `${name}*3`, money: 13, img: 'fk2' }],
-                    (data,itemi) => {
+                    this.storeItem, [{ title: name, money: 662, img: 'fk1' }, { title: `${name}*3`, money: 13, img: 'fk2' }],
+                    (data, itemi) => {
                         const item = itemi.getChildByName('bg');
                         DBU.loadRes('/store/' + data.img, item.getChildByName('spr'));
                         DBU.loadTxt(data.title, item.getChildByName('title').getChildByName('str'));
@@ -260,12 +289,12 @@ cc.Class({
         })
 
     },
-    fnConversion(){
-      
-        
+    fnConversion() {
+
+
     },
 
-    
+
 
 
     // start() {
