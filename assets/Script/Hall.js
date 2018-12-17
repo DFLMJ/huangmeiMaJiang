@@ -9,6 +9,11 @@ cc.Class({
             type: cc.Node,
             displayName: '提示框'
         },
+        headUser: {
+            default: null,
+            type: cc.Node,
+            displayName: '头部用户信息'
+        },
 
         EVPI: {
             default: null,
@@ -171,8 +176,25 @@ cc.Class({
             type: cc.Node,
             displayName: '提交模态框'
         },
+        hallBack: {
+            default: null,
+            type: cc.Node,
+            displayName: '左上角返回键'
+        },
+        hallMain: {
+            default: null,
+            type: cc.Node,
+            displayName: '主大厅'
+        },
+        hallGoldField: {
+            default: null,
+            type: cc.Node,
+            displayName: '金币场'
+        },
 
         storeClassName: '',
+        hallStart: '',
+        hallAniName:''
         // : {
         //     default: null,
         //     type: cc.Node,
@@ -190,7 +212,10 @@ cc.Class({
         this.scrollTxt('恭喜王思聪吃热狗、王思聪吃热狗、王思聪吃热狗成为全榜第一');
 
         this.fnStore()
+        // console.log(this.hallMain.getComponent(cc.Animation).clips);
 
+        // this.hallMain.getComponent(cc.Animation).getAnimationState('module_Hall').wrapMode=cc.WrapMode.Normal;
+        // this.hallMain.getComponent(cc.Animation).play();
 
     },
     fnScale: DBU.fnScale,
@@ -204,7 +229,6 @@ cc.Class({
             yb: 5658
         }
         //循环遍历添加点击事件
-        // let touchArr = [this.storeCloseBtn]
         this.CloseBtn.forEach((item, i) => {
 
             if (item) {
@@ -213,9 +237,57 @@ cc.Class({
 
         })
 
+
+
+        // 循环添加主大厅的点击监听
+        let hallAniOn = [this.goldField];
+        hallAniOn.forEach(item => {
+            item.on('touchstart', e => {
+                this.hallStart = e.target.name;
+                console.log(this.hallStart);
+                let l = 1, name = this.hallStart, aniName = '', aniComponent = this[this.hallStart].getComponent(cc.Animation), hallMainAni = this.hallMain.getComponent(cc.Animation)
+                    , finished = () => {
+                        aniComponent.getAnimationState(aniName).wrapMode = cc.WrapMode.Normal;
+                        aniComponent.play();
+
+                        hallMainAni.off('finished', finished);
+                    };
+                if (name == 'hallGoldField') {
+                    aniName = 'goldField_Hall';
+                    this.hallAniName=aniName;
+                } else {
+                    return;
+                }
+                this.headUser.active = false;
+                this.hallBack.active = true;
+                hallMainAni.on('finished', finished);
+                // 逆向播放动画
+                hallMainAni.getAnimationState('module_Hall').wrapMode = cc.WrapMode.Reverse;
+                hallMainAni.play();
+            })
+        })
+
+
+
         // 兑换
         this.fnPrepaidCalls()
 
+        //监听左上角返回键
+        this.hallBack.on('touchstart', e => {
+            this.headUser.active = true;
+            this.hallBack.active = false;
+            
+            let aniComponent = this[this.hallStart].getComponent(cc.Animation),
+            hallMainAni=this.hallMain.getComponent(cc.Animation)
+            ,finished=()=>{
+                hallMainAni.getComponent(cc.Animation).getAnimationState('module_Hall').wrapMode = cc.WrapMode.Normal;
+                hallMainAni.play();
+                aniComponent.off('finished',finished);
+            };
+            aniComponent.getAnimationState(this.hallAniName).wrapMode = cc.WrapMode.Reverse;
+            aniComponent.on('finished',finished);
+            aniComponent.play();
+        })
 
 
     },
