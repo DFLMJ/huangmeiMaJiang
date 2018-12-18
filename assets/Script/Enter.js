@@ -7,6 +7,8 @@
 // Learn life-cycle callbacks:
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/en/scripting/life-cycle-callbacks.html
+const DBU = require('DBUtility'), AnySdk = new (require('./AnysdkMgr'));
+
 
 cc.Class({
     extends: cc.Component,
@@ -38,12 +40,12 @@ cc.Class({
             type: cc.Node,
             displayName: '支付宝登录'
         },
-        agree:{
+        agree: {
             default: null,
             type: cc.Node,
             displayName: '是否点击用户协议'
         },
-        hintModal:{
+        hintModal: {
             default: null,
             type: cc.Node,
             displayName: '提示框'
@@ -65,49 +67,63 @@ cc.Class({
 
         // 给关闭按钮添加监听事件
         this.closeBtn.on('touchstart', e => {
-            e.target.parent.active=false;
+            e.target.parent.active = false;
             this.modalBg.active = false;
         });
 
         // 获取用户是否同意协议
-        console.log(this.agree);
-        
-        let clickAgree=this.agree.getComponent(cc.Toggle);
-        this.wechat.mjid=666;
+        // console.log(this.agree);
+
+        let clickAgree = this.agree.getComponent(cc.Toggle);
+        this.wechat.mjid = 666;
 
         // 登录回调
-        let login=(e)=>{
+        let login = (e) => {
             console.log(e.target.mjid);
-            
+
             if (clickAgree.isChecked) {
                 cc.director.loadScene('Hall')
-                this.hint('已经登录')
+                cc.publicMethod.hint('已经登录', this.hintModal)
                 return;
             }
-            this.hint('请同意协议')
+            cc.publicMethod.hint('请同意协议');
+
+            //    DBU.sendGetRequest('/ajax/services/feed/load',{q:'http://www.bilibili.tv'},res=>{
+            //         console.log('结果集',res);
+            //     },err=>{
+            //         console.log('错误集',err);
+
+            //     },'http://ajax.googleapis.com')
 
         }
-        // 微信登录事件
-        this.wechat.on('touchstart',login)
-        // 支付宝登录事件
-        this.alipay.on('touchstart',login)
-    },
+        AnySdk.init();
 
-    /**
-     *
-     *
-     * @param {*} txt 需要显示的提示
-     */
-    hint(str){
-        console.log(str);
-        
-        this.hintModal.active=true;
-        this.hintModal.getChildByName('str').getComponent(cc.Label).string=str;
-        this.hintModal.runAction(cc.sequence(cc.show(),cc.scaleTo(0.01, 1.2, 1.2), cc.scaleTo(0.005, 1, 1),cc.delayTime(1),cc.callFunc(()=>{
-        this.hintModal.active=false;
-            
-        })));
+        // 微信登录事件
+        this.wechat.on('touchstart', AnySdk.login);
+
+
+
+        // 支付宝登录事件
+        this.alipay.on('touchstart', login)
+
+
+        // 测试 promise
+        var promise1 = new Promise(function (resolve, reject) {
+            setTimeout(function () {
+                resolve('foo');
+            }, 3000);
+        });
+
+        promise1.then(function (value) {
+            console.log(value);
+            // expected output: "foo"
+        });
+
+        console.log(promise1);
     },
+    // wxlogin:AnySdk.login,
+
+
 
     /**
      *
@@ -116,7 +132,7 @@ cc.Class({
      * @param {*} target 点击事件传递的模态框名字
      */
     scale(e, target) {
-        this[target].active=true;
+        this[target].active = true;
         this[target].runAction(cc.sequence(cc.scaleTo(0.1, 1.2, 1.2), cc.scaleTo(0.1, 1, 1)));
         this.modalBg.active = true;
     },

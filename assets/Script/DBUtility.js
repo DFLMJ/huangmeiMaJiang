@@ -154,6 +154,155 @@ var DBUtility = {
         }
     },
 
+    /**
+     *通用ajax方法
+     *
+     * @param {*} data
+     * @param {*} method
+     * @param {*} callBack
+     */
+    ajax(data,method,callBack){
+        // const xml
+        // Promise()
+
+    },
+
+
+     /**
+      *发送Get请求
+      *
+      * @param {String} path 接口方法地址(除去接口域名地址及端口的地址)
+      * @param {JSON} data 参数json
+      * @param {Function} handler 成功返回回调
+      * @param {Function} error 异常返回回调
+      * @param {String} extraUrl 接口域名地址及端口
+      * @returns {Object} 结果集
+      */
+     sendGetRequest(path, data, handler, error, extraUrl) {
+        var xhr = cc.loader.getXMLHttpRequest();
+        xhr.timeout = 5000;//设置请求超时
+        var str = "?";
+        for (var k in data) {
+            if (str != "?") {
+                str += "&";
+            }
+            str += k + "=" + data[k];
+        }
+        if (extraUrl == null) {
+            extraUrl = cc.static.url;
+        }
+        var requestURL = extraUrl + path + encodeURI(str);
+        // console.log("RequestURL:" + requestURL);
+        xhr.open("GET", requestURL, true);
+        if (cc.sys.isNative) {
+            xhr.setRequestHeader("Accept-Encoding", "gzip,deflate", "text/html;charset=UTF-8");
+        }
+
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && (xhr.status >= 200 && xhr.status < 300)) {
+                try {
+                    var ret = JSON.parse(xhr.responseText);
+                    if (handler !== null) {
+                        handler(ret);
+                    }                        /* code */
+                } catch (e) {
+                    error && error(e, xhr)
+                }
+                finally {
+                    
+                }
+            }
+        };
+        xhr.send();
+        return xhr;
+    },
+    /**
+      *发送Post请求
+      *
+      * @param {String} path 接口方法地址(除去接口域名地址及端口的地址)
+      * @param {JSON} data 参数json
+      * @param {Function} handler 成功返回回调
+      * @param {Function} error 异常返回回调
+      * @param {String} extraUrl 接口域名地址及端口
+      * @returns {Object} 结果集      
+      */
+    sendPostRequest: function (path, data, handler, error, extraUrl) {
+        var xhr = cc.loader.getXMLHttpRequest();
+        var url = (extraUrl ? extraUrl : cc.static.url) + path;
+        xhr.open("POST", url);
+        //设置请求头
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && (xhr.status >= 200 && xhr.status <= 300)) {
+                // console.log("http res("+ xhr.responseText.length + "):" + xhr.responseText);
+                try {
+                    var ret = JSON.parse(xhr.responseText);
+                    if (handler !== null) {
+                        //用户令牌不能为空，用户令牌不正确，玩家信息不正确
+                        if (ret.result == 100030 || ret.result == 100050 || ret.result == 100060) {
+                            // cc.static.tips(path + "：" + ret.result);
+                            cc.static.tips("用户授权失效");
+                            cc.sys.localStorage.removeItem('token');
+                            cc.static.isLogin = false;
+                            setTimeout(function () { location.href = cc.static.reUrl + (cc.static.urlUtil()["pushCode"] ? "/?pushCode=" + cc.static.urlUtil()["pushCode"] : ""); }, 2000);//window.location.reload(true); 
+                            return;
+                        }
+                        cc.log(path, ret);
+                        // if (ret.result != 0 && ret.result != 1) {
+
+                        //     return;
+                        // }
+                        if (ret.result != 0 && ret.result != 1) {
+                            cc.static.tips(ret.message);
+                            return;
+                        }
+                        handler(ret);
+                    }                        /* code */
+                } catch (e) {
+                    // console.log("err:" + e);
+                    //handler(null);
+                    error && error(e, xhr);
+                    cc.log(path, e);
+                }
+                finally {
+                    //
+                }
+            } else {
+            }
+        };
+        // xhr.send(userstr);
+        xhr.send(JSON.stringify(data));
+        return xhr;
+    },
+    //  //设置签名并且MD5加密
+    setSign(params) {
+        // 按字典排序
+        var raw = function (args) {
+          var keys = Object.keys(args);
+          keys = keys.sort()
+          var newArgs = {};
+          keys.forEach(function (key) {
+            if (key == 'sign') {
+              return;
+            }
+            newArgs[key] = args[key];
+          });
+  
+          var string = '';
+          for (var k in newArgs) {
+            string += k + '=' + newArgs[k];
+          }
+          //签名规则
+          string += '85517e12b21adace2ebe37f5da85aada';
+          return string;
+        };
+        //md5加密
+        var string = cc.static.md5Sign(raw(params));
+        params.sign = string;
+        return params;
+      }
+
+
 
 }
 
