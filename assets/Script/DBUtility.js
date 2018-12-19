@@ -1,5 +1,6 @@
-
-
+cc.static={};
+//获取md5.min.js 资源 cc.static.crypto.md5(str);
+cc.static.md5Sign = require('./Tool/md5.min');
 var DBUtility = {
     /**
      * 获取随机整数,不包括两个数
@@ -150,7 +151,7 @@ var DBUtility = {
         for (let index = 0; index < (data.len?data.len: data.length); index++) {
             const item = cc.instantiate(pre);
             callBack(data[index], item);
-            item.parent = target;
+            item.parent=target;
         }
     },
 
@@ -240,8 +241,8 @@ var DBUtility = {
                     if (handler !== null) {
                         //用户令牌不能为空，用户令牌不正确，玩家信息不正确
                         if (ret.result == 100030 || ret.result == 100050 || ret.result == 100060) {
-                            // cc.static.tips(path + "：" + ret.result);
-                            cc.static.tips("用户授权失效");
+                            // cc.publicMethod.hint(path + "：" + ret.result);
+                            cc.publicMethod.hint("用户授权失效");
                             cc.sys.localStorage.removeItem('token');
                             cc.static.isLogin = false;
                             setTimeout(function () { location.href = cc.static.reUrl + (cc.static.urlUtil()["pushCode"] ? "/?pushCode=" + cc.static.urlUtil()["pushCode"] : ""); }, 2000);//window.location.reload(true); 
@@ -253,7 +254,7 @@ var DBUtility = {
                         //     return;
                         // }
                         if (ret.result != 0 && ret.result != 1) {
-                            cc.static.tips(ret.message);
+                            cc.publicMethod.hint(ret.message);
                             return;
                         }
                         handler(ret);
@@ -293,7 +294,7 @@ var DBUtility = {
             string += k + '=' + newArgs[k];
           }
           //签名规则
-          string += '85517e12b21adace2ebe37f5da85aada';
+          string += '4bcaf7499b59888we9e0egbccdmcdcfb';
           return string;
         };
         //md5加密
@@ -341,5 +342,8 @@ cc.director.GlobalEvent = {
         }
     },
 }
+
+
+
 
 module.exports = DBUtility;

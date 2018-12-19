@@ -35,38 +35,38 @@ cc.publicMethod = {
         })));
 
         // 使用微信传回的code 获得 access_token 用于注册 以及 微信openid
-        let dataCode = {
-            "appKey": "app",
-            'code': str.code
-        };
-        DBU.setSign(dataCode);
+        // let dataCode = {
+        //     "appKey": "app",
+        //     'code': str.code
+        // };
+        // DBU.setSign(dataCode);
 
-        DBU.sendPostRequest('/hmmj-restful/player/login/access_token', dataCode, resCode => {
+        // DBU.sendPostRequest('/hmmj-restful/player/login/access_token', dataCode, resCode => {
 
-            console.log('结果集', res);
+        //     console.log('结果集', res);
 
-            // 使用传回的token 和 openid 来注册微信登录
-            let dataWechat = {
-                "appKey": "app",
-                'access_token': resCode.datas.access_token,
-                'openid': resCode.datas.openid,
-            };
-            DBU.setSign(dataWechat);
+        //     // 使用传回的token 和 openid 来注册微信登录
+        //     let dataWechat = {
+        //         "appKey": "app",
+        //         'access_token': resCode.datas.access_token,
+        //         'openid': resCode.datas.openid,
+        //     };
+        //     DBU.setSign(dataWechat);
 
-            DBU.sendPostRequest('/hmmj-restful/player/login/access_token', dataWechat, resWechat => {
-                // 如果登录成功则会返回 登录成功
-                console.log('结果集', resWechat, resWechat.message);
+        //     DBU.sendPostRequest('/hmmj-restful/player/login/wechat', dataWechat, resWechat => {
+        //         // 如果登录成功则会返回 登录成功
+        //         console.log('结果集', resWechat, resWechat.message);
 
-            }, err => {
+        //     }, err => {
 
-                console.log('错误集', resWechat);
+        //         console.log('错误集', resWechat);
 
-            }, 'http://ja5.ssssgame.com')
+        //     }, 'http://ja5.ssssgame.com')
 
-        }, err => {
-            console.log('错误集', err);
+        // }, err => {
+        //     console.log('错误集', err);
 
-        }, 'http://ja5.ssssgame.com')
+        // }, 'http://ja5.ssssgame.com')
 
     }
 }

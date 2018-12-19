@@ -1,14 +1,14 @@
 {
   "ver": "1.0.0",
-  "uuid": "4ef68481-1ec2-4585-919a-441afc4328f7",
+  "uuid": "51c8d1b8-4670-4f9a-9a2a-b2d0d0283bfc",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "subMetas": {
-    "kuang2": {
+    "icon_email_c": {
       "ver": "1.0.3",
-      "uuid": "ccd9fbda-6018-4751-a02d-b6a4d1dcdd01",
-      "rawTextureUuid": "4ef68481-1ec2-4585-919a-441afc4328f7",
+      "uuid": "f7a62926-f251-47fb-896f-8a257d09008e",
+      "rawTextureUuid": "51c8d1b8-4670-4f9a-9a2a-b2d0d0283bfc",
       "trimType": "custom",
       "trimThreshold": 1,
       "rotated": false,
@@ -16,10 +16,10 @@
       "offsetY": 0,
       "trimX": 0,
       "trimY": 0,
-      "width": 278,
-      "height": 217,
-      "rawWidth": 278,
-      "rawHeight": 217,
+      "width": 8,
+      "height": 19,
+      "rawWidth": 8,
+      "rawHeight": 19,
       "borderTop": 0,
       "borderBottom": 0,
       "borderLeft": 0,

@@ -1,3 +1,5 @@
+const DBU = require('DBUtility');
+
 cc.Class({
     extends: cc.Component,
 
@@ -85,7 +87,7 @@ cc.Class({
         }
     },
     onPayResp: function () {
-        cc.static.tipsMessageFn("支付成功");
+         cc.publicMethod.hint("支付成功");
         cc.static.payCallBack.emit("callback", {
             type: cc.static.payScene
         });
@@ -167,46 +169,90 @@ cc.Class({
         setTimeout(fn, 50);
     },
     onTipResp: function (code) {
-        setTimeout(function () { cc.static.tipsMessageFn(code); }, 2000);
-        // cc.static.tipsMessageFn(code);
+        setTimeout(function () {  cc.publicMethod.hint(code); }, 2000);
+        //  cc.publicMethod.hint(code);
     },
 
     onLoginResp: function (code) {
-        // cc.static.tipsMessageFn(code);
-        // setTimeout(function(){cc.static.tipsMessageFn("微信登录成功！");},2000);
-        var code = JSON.parse(code);
-        var data = {
-            nickName: code.nickname,
-            avatarUrl: code.headimgurl,
-            openId: code.openid,
-            wxUnionid: code.unionid,
-            sex: code.sex
-        };
+        //  cc.publicMethod.hint(code);
+        // setTimeout(function(){ cc.publicMethod.hint("微信登录成功！");},2000);
+
         setTimeout(function () {
-            cc.static.HTTP.sendPostRequest("/users/wechatLogin", data, function (ret) {
-                // cc.static.tipsMessageFn(JSON.stringify(ret));
-                if (ret.code == 0) {
-                    var dt = ret.data;
-                    var userinfo = {
-                        token: dt.token,
-                        id: dt.id,
-                        mobile: dt.mobile,
-                        sex: dt.sex,
-                        userName: dt.userName,
-                        avatarUrl: dt.avatarUrl,
-                        integral: dt.integral,
-                    };
-                    cc.sys.localStorage.setItem('userData', JSON.stringify(userinfo));
-                    cc.sys.localStorage.setItem('state', "1");//记录为微信的登录状态
 
-                    cc.static.loginSuccess();
 
-                } else {
-                    cc.static.usersMessageFn(ret.message, -400);
-                }
-            }, function (err) {
-                cc.static.usersMessageFn("网络异常");
-            }, cc.static.url);
+            // 使用微信传回的code 获得 access_token 用于注册 以及 微信openid
+            let dataCode = {
+                "appKey": "app",
+                'code':code
+            };
+            DBU.setSign(dataCode);
+
+            DBU.sendPostRequest('/hmmj-restful/player/login/access_token', dataCode, resCode => {
+
+                cc.publicMethod.hint(`result ${resCode.result}, access_token ${resCode.access_token}`)
+
+                // 使用传回的token 和 openid 来注册微信登录
+                let dataWechat = {
+                    "appKey": "app",
+                    'access_token': resCode.datas.access_token,
+                    'openid': resCode.datas.openid,
+                };
+                DBU.setSign(dataWechat);
+
+                DBU.sendPostRequest('/hmmj-restful/player/login/wechat', dataWechat, resWechat => {
+                    // 如果登录成功则会返回 登录成功
+                    console.log('结果集', resWechat, resWechat.message);
+
+                    cc.publicMethod.hint(`token ${resWechat.datas.token}`)
+
+
+                }, err => {
+                    cc.publicMethod.hint(`resWechatErr ${err}`)
+
+
+                }, 'http://ja5.ssssgame.com')
+
+            }, err => {
+                cc.publicMethod.hint(`resErr ${err}`)
+
+            }, 'http://ja5.ssssgame.com')
+
+
+
+
+            // var code = JSON.parse(code);
+            // var data = {
+            //     nickName: code.nickname,
+            //     avatarUrl: code.headimgurl,
+            //     openId: code.openid,
+            //     wxUnionid: code.unionid,
+            //     sex: code.sex
+            // };
+
+            // cc.static.HTTP.sendPostRequest("/hmmj-restful/player/login/access_token", data, function (ret) {
+            //     //  cc.publicMethod.hint(JSON.stringify(ret));
+            //     if (ret.code == 0) {
+            //         var dt = ret.data;
+            //         var userinfo = {
+            //             token: dt.token,
+            //             id: dt.id,
+            //             mobile: dt.mobile,
+            //             sex: dt.sex,
+            //             userName: dt.userName,
+            //             avatarUrl: dt.avatarUrl,
+            //             integral: dt.integral,
+            //         };
+            //         cc.sys.localStorage.setItem('userData', JSON.stringify(userinfo));
+            //         cc.sys.localStorage.setItem('state', "1");//记录为微信的登录状态
+
+            //         cc.static.loginSuccess();
+
+            //     } else {
+            //         cc.static.usersMessageFn(ret.message, -400);
+            //     }
+            // }, function (err) {
+            //     cc.static.usersMessageFn("网络异常");
+            // }, cc.static.url);
         }, 2000);
     },
 });

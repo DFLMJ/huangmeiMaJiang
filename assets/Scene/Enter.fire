@@ -2834,7 +2834,9 @@
     },
     "hintModal": {
       "__id__": 75
-    }
+    },
+    "ANDROID_API": null,
+    "IOS_API": null
   },
   {
     "__type__": "cc.Node",

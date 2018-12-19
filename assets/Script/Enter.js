@@ -8,6 +8,11 @@
 //  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/en/scripting/life-cycle-callbacks.html
 const DBU = require('DBUtility'), AnySdk = new (require('./AnysdkMgr'));
+cc.static.AnysdkMgr=AnySdk;
+console.log(DBU.setSign({
+    "appKey":"app",
+    "code":"011ZLlG00RlB1H1ctEH00yIDG00ZLlGC"
+    }));
 
 
 cc.Class({
@@ -49,7 +54,9 @@ cc.Class({
             default: null,
             type: cc.Node,
             displayName: '提示框'
-        }
+        },
+        ANDROID_API:null,
+        IOS_API:null
 
 
     },
@@ -57,6 +64,10 @@ cc.Class({
     // LIFE-CYCLE CALLBACKS:
 
     onLoad() {
+        // 微信登录初始化
+        
+        AnySdk.init.bind(this)();
+
         // 预加载场景
         cc.director.preloadScene("Hall", function () {
             cc.log("主界面场景预加载完毕");
@@ -96,10 +107,9 @@ cc.Class({
             //     },'http://ajax.googleapis.com')
 
         }
-        AnySdk.init();
 
         // 微信登录事件
-        this.wechat.on('touchstart', AnySdk.login);
+        this.wechat.on('touchstart', AnySdk.login.bind(this));
 
 
 

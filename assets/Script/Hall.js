@@ -80,11 +80,11 @@ cc.Class({
             type: cc.Node,
             displayName: '亲友圈'
         },
-        toJoinRoom: {
-            default: null,
-            type: cc.Node,
-            displayName: '加入房间'
-        },
+        // toJoinRoom: {
+        //     default: null,
+        //     type: cc.Node,
+        //     displayName: '加入房间'
+        // },
         createARoom: {
             default: null,
             type: cc.Node,
@@ -190,6 +190,11 @@ cc.Class({
             default: null,
             type: cc.Node,
             displayName: '金币场'
+        },
+        joinRoom: {
+            default: null,
+            type: cc.Node,
+            displayName: '加入房间'
         },
 
         storeClassName: '',
@@ -347,8 +352,8 @@ cc.Class({
             let child = item.getChildByName('spr'), name = e ? e.target.name : 'gold';
             if (item.name == name) {
                 child.active = true;
-                DBU.fnCreateItem(this.store.getChildByName('scrollview').getChildByName('view').getChildByName('content'),
-                    this.storeItem, [{ title: name, money: 662, img: 'fk1' }, { title: `${name}*3`, money: 13, img: 'fk2' }],
+                DBU.fnCreateItem(this.store.getChildByName('scrollview').getComponent(cc.ScrollView).content,
+                    this.storeItem, [{ title: name, money: 662, img: 'fk1' }, { title: `${name}*3`, money: 13, img: 'fk2' },{ title: name, money: 662, img: 'fk1' }, { title: `${name}*3`, money: 13, img: 'fk2' },{ title: name, money: 662, img: 'fk1' }, { title: `${name}*3`, money: 13, img: 'fk2' },{ title: name, money: 662, img: 'fk1' }, { title: `${name}*3`, money: 13, img: 'fk2' }],
                     (data, itemi) => {
                         const item = itemi.getChildByName('bg');
                         DBU.loadRes('/store/' + data.img, item.getChildByName('spr'));
