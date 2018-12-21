@@ -85,7 +85,7 @@ cc.Class({
         //     type: cc.Node,
         //     displayName: '加入房间'
         // },
-        createARoom: {
+        createRoom: {
             default: null,
             type: cc.Node,
             displayName: '创建房间'

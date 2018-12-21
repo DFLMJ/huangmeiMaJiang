@@ -28,7 +28,7 @@
           "x": [
             {
               "frame": 0,
-              "value": 900
+              "value": 1500
             },
             {
               "frame": 0.25,
@@ -42,7 +42,7 @@
           "x": [
             {
               "frame": 0,
-              "value": 1000
+              "value": 1500
             },
             {
               "frame": 0.3,
@@ -70,7 +70,7 @@
           "x": [
             {
               "frame": 0,
-              "value": 1000
+              "value": 1500
             },
             {
               "frame": 0.35,
@@ -84,7 +84,7 @@
           "x": [
             {
               "frame": 0,
-              "value": 1000
+              "value": 1500
             },
             {
               "frame": 0.375,
@@ -98,11 +98,25 @@
           "x": [
             {
               "frame": 0,
-              "value": 1000
+              "value": 1500
             },
             {
               "frame": 0.325,
               "value": 451
+            }
+          ]
+        }
+      },
+      "createRoom": {
+        "props": {
+          "x": [
+            {
+              "frame": 0,
+              "value": 1500
+            },
+            {
+              "frame": 0.25,
+              "value": 149
             }
           ]
         }

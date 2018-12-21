@@ -15,12 +15,12 @@ cc.Class({
         keycode: {
             default: null,
             type: cc.Node,
-            dispylName: '数字键盘节点'
+            displayName: '数字键盘节点'
         },
         showNumber: {
             default: null,
             type: cc.Node,
-            dispylName: '显示数字的节点'
+            displayName: '显示数字的节点'
         }
     },
 
@@ -36,14 +36,10 @@ cc.Class({
         };
         let keyArr = this.keycode.children, numArr = [], showNumber = [], showNumberReverse=[];
         // 将keycode节点下面的num节点获取
-        // pushChildren(this.keycode,keyArr,'num')
-        // 将keycode节点下面的num节点获取
         pushChildren(this.showNumber,showNumber,'num')
         // 将keycode节点下面的num节点获取
         pushChildren(this.showNumber,showNumberReverse,'num')
-        showNumberReverse.reverse()
-
-        console.log(showNumberReverse);
+        showNumberReverse.reverse();
 
         keyArr.forEach(item => {
             console.log(item.name);
@@ -52,7 +48,7 @@ cc.Class({
                 numArr.push(item);
             } else if (item.name == 'reset') {
                 item.on('touchstart', e => {
-                    for (const num of showNumberReverse) {
+                    for (const num of showNumber) {
                         if (num.getComponent(cc.Label).string=='') {
                             break;
                         }

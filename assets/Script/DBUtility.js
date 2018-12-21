@@ -307,6 +307,8 @@ var DBUtility = {
 
 }
 
+cc.DBUtility=DBUtility;
+
 
 // 全局事件派发事件
 cc.director.GlobalEvent = {
