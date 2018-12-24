@@ -20,6 +20,46 @@
               "frame": 0.4,
               "value": 360
             }
+          ],
+          "y": [
+            {
+              "frame": 0,
+              "value": 4.2
+            },
+            {
+              "frame": 0.12,
+              "value": 10
+            },
+            {
+              "frame": 0.28,
+              "value": -10
+            },
+            {
+              "frame": 0.4,
+              "value": 4.2
+            }
+          ]
+        }
+      },
+      "spr": {
+        "props": {
+          "y": [
+            {
+              "frame": 0,
+              "value": 0
+            },
+            {
+              "frame": 0.12,
+              "value": 10
+            },
+            {
+              "frame": 0.28,
+              "value": -10
+            },
+            {
+              "frame": 0.4,
+              "value": 0
+            }
           ]
         }
       }

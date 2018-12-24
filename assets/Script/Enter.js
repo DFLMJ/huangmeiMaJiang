@@ -13,7 +13,7 @@ console.log(DBU.setSign({
     "appKey":"app",
     "code":"011ZLlG00RlB1H1ctEH00yIDG00ZLlGC"
     }));
-
+// 41f93c18aac091809073de1914fa2d08
 
 cc.Class({
     extends: cc.Component,

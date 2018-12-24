@@ -199,7 +199,7 @@ cc.Class({
 
         storeClassName: '',
         hallStart: '',
-        hallAniName:''
+        hallAniName: ''
         // : {
         //     default: null,
         //     type: cc.Node,
@@ -214,17 +214,25 @@ cc.Class({
     onLoad() {
         this.init();
 
-        this.scrollTxt('恭喜王思聪吃热狗、王思聪吃热狗、王思聪吃热狗成为全榜第一');
+        this.fnStore();
 
-        this.fnStore()
-        // console.log(this.hallMain.getComponent(cc.Animation).clips);
-
-        // this.hallMain.getComponent(cc.Animation).getAnimationState('module_Hall').wrapMode=cc.WrapMode.Normal;
-        // this.hallMain.getComponent(cc.Animation).play();
 
     },
     fnScale: DBU.fnScale,
     init() {
+        // 判断创建房间的规则是否存在 如果不存在则创建开房规则
+        let createRules = {
+            roomRate: 0,
+            endPoints: 8,
+            inning: 1,
+            nnt: 1,
+            jebo: 0,
+            floatNum: 2,
+            robbedBar: 0,
+            location: 0
+        };
+        cc.sys.localStorage.getItem('createRules') ? 0 : cc.sys.localStorage.setItem('createRules', JSON.stringify(createRules));
+
         console.log('你初始化了文件');
         let user = {
             userName: '王思聪吃热狗',
@@ -235,7 +243,6 @@ cc.Class({
         }
         //循环遍历添加点击事件
         this.CloseBtn.forEach((item, i) => {
-
             if (item) {
                 item.on('touchstart', DBU.fnCloseBtn.bind(this))
             };
@@ -259,7 +266,7 @@ cc.Class({
                     };
                 if (name == 'hallGoldField') {
                     aniName = 'goldField_Hall';
-                    this.hallAniName=aniName;
+                    this.hallAniName = aniName;
                 } else {
                     return;
                 }
@@ -281,20 +288,41 @@ cc.Class({
         this.hallBack.on('touchstart', e => {
             this.headUser.active = true;
             this.hallBack.active = false;
-            
+
             let aniComponent = this[this.hallStart].getComponent(cc.Animation),
-            hallMainAni=this.hallMain.getComponent(cc.Animation)
-            ,finished=()=>{
-                hallMainAni.getComponent(cc.Animation).getAnimationState('module_Hall').wrapMode = cc.WrapMode.Normal;
-                hallMainAni.play();
-                aniComponent.off('finished',finished);
-            };
+                hallMainAni = this.hallMain.getComponent(cc.Animation)
+                , finished = () => {
+                    hallMainAni.getComponent(cc.Animation).getAnimationState('module_Hall').wrapMode = cc.WrapMode.Normal;
+                    hallMainAni.play();
+                    aniComponent.off('finished', finished);
+                };
             aniComponent.getAnimationState(this.hallAniName).wrapMode = cc.WrapMode.Reverse;
-            aniComponent.on('finished',finished);
+            aniComponent.on('finished', finished);
             aniComponent.play();
         })
 
 
+        //轮询ajax
+        let ajaxLxData = {
+            appKey: cc.publicParameter.appKey
+        };
+        DBU.setSign(ajaxLxData);
+        console.log(ajaxLxData);
+        let intervalCallback = () => {
+            DBU.sendPostRequest('/hmmj-restful/common/notice/rollNotice', ajaxLxData, res => {
+                let datArr = res.datas.list, strList = [];
+                datArr.forEach(item => {
+                    strList.push(item.noticeContent);
+                });
+                console.log('dfg', strList);
+                this.scrollTxt(strList);
+
+            }, err => {
+                console.log(err);
+            }, cc.publicParameter.infoUrl);
+        };
+        intervalCallback();
+        cc.publicParameter.rollID = setInterval(intervalCallback, 50000);
     },
     // --------------兑换充值卡-----whiteBox
     fnPrepaidCalls() {
@@ -324,23 +352,36 @@ cc.Class({
      *
      * @param {String} txt 滚动播放的文字内容
      */
-    scrollTxt(txt) {
-        this.broadcast.stopAllActions();
+    scrollTxt(txtArr, txtArrIndex = 0) {
+        console.log(txtArr);
+
         this.broadcast.parent.parent.active = true;
-        DBU.loadTxt(`公告：<size=20>${txt}</size>`, this.broadcast);
-        let width = this.broadcast.width, parentWidth = this.broadcast.parent.width / 2, i = 0;
-        let act = cc.sequence(cc.moveTo(0, width + parentWidth, 0), cc.moveTo(10, -(width + parentWidth), 0), cc.callFunc(() => {
+        this.broadcast.stopAllActions();
+
+        // console.log(this.broadcast.getChildByName('str').width);
+
+        DBU.loadTxt(`${txtArr[txtArrIndex]}`, this.broadcast.getChildByName('str'));
+        console.log(this.broadcast.getChildByName('str').getComponent(cc.Label).string);
+
+        let width = this.broadcast.width, childrenWidth = this.broadcast.getChildByName('str').width / 2, i = 0;
+        let act = cc.sequence(cc.moveTo(0, width + childrenWidth, 0), cc.moveTo(5, -(width + childrenWidth), 0), cc.callFunc(() => {
             console.log('进入回调');
 
             this.broadcast.stopAllActions();
             i++;
             if (i > 1) {
                 this.broadcast.parent.parent.active = false;
+                if (txtArr.length > ++txtArrIndex) {
+                    this.scrollTxt(txtArr, txtArrIndex);
+                }
                 return;
             }
             this.broadcast.runAction(act);
         }));
         this.broadcast.runAction(act);
+        // this.broadcast.runAction(act);
+
+
     },
 
     /**
@@ -353,7 +394,7 @@ cc.Class({
             if (item.name == name) {
                 child.active = true;
                 DBU.fnCreateItem(this.store.getChildByName('scrollview').getComponent(cc.ScrollView).content,
-                    this.storeItem, [{ title: name, money: 662, img: 'fk1' }, { title: `${name}*3`, money: 13, img: 'fk2' },{ title: name, money: 662, img: 'fk1' }, { title: `${name}*3`, money: 13, img: 'fk2' },{ title: name, money: 662, img: 'fk1' }, { title: `${name}*3`, money: 13, img: 'fk2' },{ title: name, money: 662, img: 'fk1' }, { title: `${name}*3`, money: 13, img: 'fk2' }],
+                    this.storeItem, [{ title: name, money: 662, img: 'fk1' }, { title: `${name}*3`, money: 13, img: 'fk2' }, { title: name, money: 662, img: 'fk1' }, { title: `${name}*3`, money: 13, img: 'fk2' }, { title: name, money: 662, img: 'fk1' }, { title: `${name}*3`, money: 13, img: 'fk2' }, { title: name, money: 662, img: 'fk1' }, { title: `${name}*3`, money: 13, img: 'fk2' }],
                     (data, itemi) => {
                         const item = itemi.getChildByName('bg');
                         DBU.loadRes('/store/' + data.img, item.getChildByName('spr'));

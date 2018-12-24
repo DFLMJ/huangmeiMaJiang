@@ -34,7 +34,27 @@ cc.Class({
 
     // LIFE-CYCLE CALLBACKS:
     onEnable() {
-        this.fnCd([{ sprBg: '1hfq', spr: '1yhf', money: '789' }, { sprBg: '1hfq', spr: '1yhf', money: '789' }, { sprBg: '1hfq', spr: '1yhf', money: '789' }, { sprBg: '1hfq', spr: '1yhf', money: '789' }, { sprBg: '1hfq', spr: '1yhf', money: '789' }, { sprBg: '1hfq', spr: '1yhf', money: '789' },]);
+
+        let fnGetdata = {
+            appKey: cc.publicParameter.appKey,
+            token: cc.publicParameter.token
+        }
+
+        DBU.setSign(fnGetdata);
+        DBU.sendPostRequest('/hmmj-restful/goods/list', fnGetdata, this.fnGet.bind(this), err => {
+            console.log(err);
+
+        }, cc.publicParameter.infoUrl)
+        // this.fnCd([{ sprBg: '1hfq', spr: '1yhf', money: '789' }, { sprBg: '1hfq', spr: '1yhf', money: '789' }, { sprBg: '1hfq', spr: '1yhf', money: '789' }, { sprBg: '1hfq', spr: '1yhf', money: '789' }, { sprBg: '1hfq', spr: '1yhf', money: '789' }, { sprBg: '1hfq', spr: '1yhf', money: '789' },]);
+    },
+    fnGet(res) {
+        console.log(res);
+        let resArr = res.datas.goodsList, dataArr = [];
+        resArr.forEach(item => {
+            // let {goodsId:goodsId,goodsLogo:goodsLogo,goodsName:goodsName,jewelNum:jewelNum}=item;
+            dataArr.push(item);
+        });
+        this.fnCd(dataArr);
     },
     fnCd(data) {
         // 移除指定页面
@@ -55,10 +75,14 @@ cc.Class({
                 const item = page.children[index];
                 // 判断当前商品数是否有数据展示，如果没有的话就隐藏
                 if (index < (pageNum == (data.len - 1) ? data.remainder : itemNum)) {
+                    let { goodsId: goodsId, goodsLogo: goodsLogo, goodsName: goodsName, jewelNum: jewelNum } = data[pageNum * itemNum + index];
                     // 数据索引 等于 当前页数乘上 每页显示的个数再加当前页商品的索引数
-                    DBU.loadRes('/Conversion/' + data[pageNum * itemNum + index].sprBg, item.getChildByName('conversion').getChildByName('sprBg'));
-                    DBU.loadRes('/Conversion/' + data[pageNum * itemNum + index].spr, item.getChildByName('conversion').getChildByName('spr'));
-                    DBU.loadTxt(data[pageNum * itemNum + index].money, item.getChildByName('je').getChildByName('money'))
+                    item.goodsId = goodsId;
+                    console.log(goodsLogo);
+                    let url=cc.publicParameter.infoUrl;
+                    DBU.loadUrl(cc.publicParameter.infoUrl+goodsLogo, item.getChildByName('conversion').getChildByName('sprBg'));
+                    DBU.loadTxt(goodsName, item.getChildByName('conversion').getChildByName('str'));
+                    DBU.loadTxt(jewelNum, item.getChildByName('je').getChildByName('money'));
                     console.log(33);
                 } else {
                     item.active = false;

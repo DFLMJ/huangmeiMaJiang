@@ -34,7 +34,7 @@ cc.Class({
         // this.node.dispatchEvent( new cc.Event.EventCustom('prepaidCalls', true))
 
         // 使用全局事件 发射事件
-        cc.director.GlobalEvent.emit('prepaidCalls',{num:this.node.getChildByName('je').getChildByName('money').getComponent(cc.Label).string})
+        cc.director.GlobalEvent.emit('prepaidCalls',{goodsId:this.node.goodsId})
 
     },
 

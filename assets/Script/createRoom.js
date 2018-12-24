@@ -45,12 +45,8 @@ cc.Class({
             robbedBar: null,
             location: null,
         }
-    },
-
-    start() {
-
         let data = {
-            roomRate: 0,
+            roomRate: 1,
             endPoints: 8,
             inning: 1,
             nnt: 1,
@@ -59,7 +55,12 @@ cc.Class({
             robbedBar: 0,
             location: 0
         };
-        // this.refreshData(data);
+        this.refreshData(data);
+    },
+
+    start() {
+
+        
 
     },
 
@@ -75,21 +76,24 @@ cc.Class({
             for (const key in this.parameter) {
                 if (this.parameter.hasOwnProperty(key)) {
                     if (child.name == key) {
-                        // console.log(child.name);
-
-                        child.children.forEach(
+                        console.log(child.name);
+                        if (child.getComponent(cc.ToggleContainer).toggleItems) {
+                            
+                        } 
+                        child.getComponent(cc.ToggleContainer).toggleItems.forEach(
                             (item, i) => {
                                 // 判断是否为更新布局模式
                                 let isDataChild = data ? data[child.name] : false;
                                 // 判断是否被选中
-                                if (item.getComponent(cc.Toggle).isChecked || isDataChild) {
+                                if (item.isChecked || isDataChild) {
 
-                                    let editbox = item.getChildByName('editbox');
+                                    let editbox =false;
+                                    // let editbox = item.getChildByName('editbox');
                                     // 判断是否有输入框的节点
                                     if (editbox) {
                                         if (isDataChild) {
                                         this.parameter[child.name] = editbox.getComponent(cc.EditBox).string=isDataChild;                                            
-                                        item.getComponent(cc.Toggle).isChecked=true;                                      
+                                        item.isChecked=true;                                      
                                         } else {
                                         this.parameter[child.name] = editbox.getComponent(cc.EditBox).string;                                            
                                         }
@@ -98,7 +102,9 @@ cc.Class({
                                     if (isDataChild?isDataChild==i:false) {
                                         console.log('应该选中',i,item.name);
                                         
-                                        item.getComponent(cc.Toggle).isChecked=true;                                      
+                                        item.isChecked=true;               
+                                        console.log(item.name,item.isChecked);
+                                                               
                                     } else {
                                         this.parameter[child.name] = i;
                                         
