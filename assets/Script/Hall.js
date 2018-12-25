@@ -50,7 +50,7 @@ cc.Class({
             type: cc.Node,
             displayName: '设置'
         },
-        callCenter: {
+        customerService: {
             default: null,
             type: cc.Node,
             displayName: '客服'
@@ -334,16 +334,51 @@ cc.Class({
             e.target.parent.active = false;
             e.target.parent.parent.active = false;
         })
-        let prepaidCallsNum = 0, phoneNum = this.submodule.getChildByName('prepaidCalls').getChildByName('whiteBox').getChildByName('str');
+        let goodsId = 0, phoneNum = this.submodule.getChildByName('prepaidCalls').getChildByName('whiteBox').getChildByName('str');
         // 试用全局事件 监听
         cc.director.GlobalEvent.on('prepaidCalls', e => {
-            prepaidCallsNum = e.num;
-        }, this.submodule.getChildByName('prepaidCalls'))
+            goodsId = e.goodsId;
+        }, this.submodule.getChildByName('prepaidCalls'));
         this.submodule.getChildByName('prepaidCalls').getChildByName('yesBtn').on('touchstart', e => {
+            // 关闭窗口
+            e.target.parent.active = false;
+            e.target.parent.parent.active = false;
 
             // 调用支付方法
-            console.log(prepaidCallsNum, phoneNum.getComponent(cc.EditBox).string, '您提交了支付');
+            console.log(goodsId, phoneNum.getComponent(cc.EditBox).string, '您提交了支付');
+            let iphoneNum = phoneNum.getComponent(cc.EditBox).string;
+            if (!iphoneNum || !goodsId || iphoneNum.length < 11) {
+                cc.publicMethod.hint(`商品消息或手机号有误！`);
+                return;
+            }
+            this.submitExchange(iphoneNum, goodsId);
+
         })
+    },
+
+    /**
+     *提交兑换的方法
+     *
+     * @param {Number} iponeNum 
+     * @param {String} goodsId
+     */
+    submitExchange(iponeNum, goodsId) {
+        console.log(1113);
+
+        let payData = {
+            token: cc.publicParameter.token,
+            appKey: cc.publicParameter.appKey,
+            telPhone: iponeNum,
+            goodsId: goodsId
+        }
+        DBU.setSign(payData);
+        DBU.sendPostRequest("/hmmj-restful/goods/convert/buy", payData, res => {
+            console.log(res);
+            cc.publicMethod.hint(res.message)
+        }, err => {
+            console.log(err);
+            cc.publicMethod.hint(err.message)
+        }, cc.publicParameter.infoUrl)
     },
 
 
@@ -353,7 +388,7 @@ cc.Class({
      * @param {String} txt 滚动播放的文字内容
      */
     scrollTxt(txtArr, txtArrIndex = 0) {
-        console.log(txtArr);
+        // console.log(txtArr);
 
         this.broadcast.parent.parent.active = true;
         this.broadcast.stopAllActions();

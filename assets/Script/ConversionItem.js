@@ -4,11 +4,7 @@ cc.Class({
     extends: cc.Component,
 
     properties: {
-        modalBg: {
-            default: null,
-            type: cc.Node,
-            displayName: '话费窗口'
-        },
+       
     },
 
     // LIFE-CYCLE CALLBACKS:
@@ -22,11 +18,11 @@ cc.Class({
      */
     fnOnClick(e){
         console.log(22);
-        e.target.parent.getChildByName('je').emit('touchstart')
-        setTimeout(()=>{
-            e.target.parent.getChildByName('je').emit('touchend')
-        },100)
-        cc.find('Canvas/modalBox/submodule').active=true;        
+        e.target.parent.getChildByName('je').emit('touchstart');
+        // setTimeout(()=>{
+        //     e.target.parent.getChildByName('je').emit('touchend')
+        // },100);
+        cc.find('Canvas/modalBox/submodule').active=true;
         cc.find('Canvas/modalBox/submodule/prepaidCalls').active=true;        
         // this.node.emit('prepaidCalls',{
         //     money:this.node.getChildByName('je').getChildByName('money').getComponent(cc.Label).string

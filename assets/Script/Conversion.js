@@ -9,11 +9,6 @@ cc.Class({
             type: cc.Node,
             displayName: '兑换预制体父节点'
         },
-        conversionItem: {
-            default: null,
-            type: cc.Prefab,
-            displayName: '兑换预制体'
-        },
         conversionPage: {
             default: null,
             type: cc.Prefab,
@@ -22,12 +17,22 @@ cc.Class({
         commodity: {
             default: null,
             type: cc.Node,
-            displayName: '兑换节点'
+            displayName: '兑换商品页按钮'
         },
         record: {
             default: null,
             type: cc.Node,
-            displayName: '兑换记录'
+            displayName: '兑换记录页按钮'
+        },
+        recordParent: {
+            default: null,
+            type: cc.Node,
+            displayName: '记录预制体父节点'
+        },
+        recordItem: {
+            default: null,
+            type: cc.Prefab,
+            displayName: '记录预制体'
         },
 
     },
@@ -44,8 +49,7 @@ cc.Class({
         DBU.sendPostRequest('/hmmj-restful/goods/list', fnGetdata, this.fnGet.bind(this), err => {
             console.log(err);
 
-        }, cc.publicParameter.infoUrl)
-        // this.fnCd([{ sprBg: '1hfq', spr: '1yhf', money: '789' }, { sprBg: '1hfq', spr: '1yhf', money: '789' }, { sprBg: '1hfq', spr: '1yhf', money: '789' }, { sprBg: '1hfq', spr: '1yhf', money: '789' }, { sprBg: '1hfq', spr: '1yhf', money: '789' }, { sprBg: '1hfq', spr: '1yhf', money: '789' },]);
+        }, cc.publicParameter.infoUrl);
     },
     fnGet(res) {
         console.log(res);
@@ -59,9 +63,6 @@ cc.Class({
     fnCd(data) {
         // 移除指定页面
         this.conversionContent.getComponent(cc.PageView).removeAllPages();
-
-
-        // let data = [{ sprBg: '1hfq', spr: '1yhf', money: '789' }, { sprBg: '1hfq', spr: '1yhf', money: '789' }, { sprBg: '1hfq', spr: '1yhf', money: '789' }, { sprBg: '1hfq', spr: '1yhf', money: '789' }, { sprBg: '1hfq', spr: '1yhf', money: '789' }, { sprBg: '1hfq', spr: '1yhf', money: '789' },], pageNum = 0, itemNum = 4;
         let pageNum = 0, itemNum = 4;
         data.len = (data.length / itemNum > 1 ? parseInt(data.length / itemNum) : parseInt(data.length / itemNum)) + 1;
         data.remainder = data.length % itemNum == 0 ? itemNum : data.length % itemNum;
@@ -79,11 +80,10 @@ cc.Class({
                     // 数据索引 等于 当前页数乘上 每页显示的个数再加当前页商品的索引数
                     item.goodsId = goodsId;
                     console.log(goodsLogo);
-                    let url=cc.publicParameter.infoUrl;
-                    DBU.loadUrl(cc.publicParameter.infoUrl+goodsLogo, item.getChildByName('conversion').getChildByName('sprBg'));
+                    DBU.loadUrl(cc.publicParameter.infoUrl + goodsLogo, item.getChildByName('conversion').getChildByName('sprBg'));
                     DBU.loadTxt(goodsName, item.getChildByName('conversion').getChildByName('str'));
                     DBU.loadTxt(jewelNum, item.getChildByName('je').getChildByName('money'));
-                    console.log(33);
+
                 } else {
                     item.active = false;
                 }
@@ -100,6 +100,10 @@ cc.Class({
                 if (e.target.name == node[i]) {
                     target.active = !target.active;
                     e.target.parent.getChildByName(node[i]).getChildByName('click').active = true;
+                    if (e.target.name == 'record') {
+                        // 调用生成记录的函数
+                        this.fnGetRecord();
+                    }
                 } else {
                     e.target.parent.getChildByName(node[i]).getChildByName('click').active = false;
                     target.parent.getChildByName(node[i]).active = false;
@@ -109,7 +113,36 @@ cc.Class({
         this.record.on('touchstart', click)
         this.commodity.on('touchstart', click)
 
-    }
+    },
+
+    /**
+     *获取兑换记录
+     *
+     */
+    fnGetRecord() {
+        let dataRecord = {
+            appKey: cc.publicParameter.appKey,
+            token: cc.publicParameter.token
+        }
+        DBU.setSign(dataRecord);
+        DBU.sendPostRequest('/hmmj-restful/goods/convert/list', dataRecord, res => {
+
+            DBU.fnCreateItem(this.recordParent, this.recordItem, res.datas.goodsConvertList,
+                (data, item) => {
+                    DBU.loadUrl(cc.publicParameter.infoUrl + data.goodsLogo, item.getChildByName('img'));
+                    DBU.loadTxt(`充值手机: ${data.telPhone}`, item.getChildByName('conversion').getChildByName('phoneNum'));
+                    DBU.loadTxt(`元宝: ${data.jewelNum}`, item.getChildByName('conversion').getChildByName('jewelNum'));
+                    DBU.loadTxt(`${data.convertDate}`, item.getChildByName('detail').getChildByName('time'));
+                    DBU.loadTxt(`兑换ID: ${data.goodsConvertId}`, item.getChildByName('detail').getChildByName('id'));
+                    let status=data.status;
+                    DBU.loadTxt(`状态: ${status==1?'处理中':(status==2?'兑换成功':'兑换失败')}`, item.getChildByName('status'));
+                });
+
+        }, err => {
+            cc.publicMethod.hint(err.message)
+
+        }, cc.publicParameter.infoUrl)
+    },
 
     // onLoad () {
     //     // this.fnCd();

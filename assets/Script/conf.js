@@ -7,14 +7,20 @@ window.conf = {
     }
 };
 
-cc.publicParameter  = {
+cc.publicParameter = {
     // infoUrl:'http://ja5.ssssgame.com',
-    infoUrl:'/mjDL',
-    appKey:'app',
+    infoUrl: '/mjDL',
+    appKey: 'app',
     // 用户的后台token 有效期24小时
-    token:'45036f60fc2399d7d82bb3062f71a21a',
+    token: '45036f60fc2399d7d82bb3062f71a21a',
     // app签名 暂未配置DBU里面的签名 所以暂无影响
-    CAdES:'4bcaf7499b59888we9e0egbccdmcdcfb',
-    rollID:null
-    
+    CAdES: '4bcaf7499b59888we9e0egbccdmcdcfb',
+    rollID: null,
+}
+cc.publicMethod = {
+    hint: function (str) {
+        DBU.loadTxt(str, cc.find('tips/str'));
+        cc.find('tips').stopAllActions();
+        cc.find('tips').runAction(cc.sequence(cc.scaleTo(0,1), cc.delayTime(1), cc.scaleTo(0,0)));
+    }
 }
