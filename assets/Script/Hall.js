@@ -14,6 +14,11 @@ cc.Class({
             type: cc.Node,
             displayName: '头部用户信息'
         },
+        userInfo: {
+            default: null,
+            type: cc.Node,
+            displayName: '用户信息'
+        },
 
         EVPI: {
             default: null,
@@ -24,6 +29,11 @@ cc.Class({
             default: null,
             type: cc.Node,
             displayName: '更多金币'
+        },
+        message: {
+            default: null,
+            type: cc.Node,
+            displayName: '左上角消息'
         },
         roomCard: {
             default: null,
@@ -95,6 +105,11 @@ cc.Class({
             type: cc.Node,
             displayName: '金币场'
         },
+        exploit:{
+            default: null,
+            type: cc.Node,
+            displayName: '开发中'
+        },
         arena: {
             default: null,
             type: cc.Node,
@@ -146,7 +161,7 @@ cc.Class({
             type: cc.Node,
             displayName: '任务'
         },
-        coupleBack: {
+        feedback: {
             default: null,
             type: cc.Node,
             displayName: '反馈'
@@ -214,7 +229,7 @@ cc.Class({
     onLoad() {
         this.init();
 
-        this.fnStore();
+        // this.fnStore();
 
 
     },
@@ -423,19 +438,33 @@ cc.Class({
      *商店大类
      *
      */
-    fnStore(e) {
+    fnStore(e,target) {
+        // 判断商店窗口是否打开
+        if (!this.store.active) {
+            this.fnScale('','store');            
+        }
+// 改变商店类目的选项
         this.storeClass.forEach(item => {
-            let child = item.getChildByName('spr'), name = e ? e.target.name : 'gold';
+            let child = item.getChildByName('spr'), name = target ? target : 'gold';
             if (item.name == name) {
                 child.active = true;
-                DBU.fnCreateItem(this.store.getChildByName('scrollview').getComponent(cc.ScrollView).content,
+                if (name=='vip') {
+                    this.store.getChildByName('multiple').active=false;
+                    this.store.getChildByName('vip').active=true;
+                } else {
+                    this.store.getChildByName('vip').active=false;
+                    this.store.getChildByName('multiple').active=true;
+                    
+                    DBU.fnCreateItem(this.store.getChildByName('multiple').getComponent(cc.ScrollView).content,
                     this.storeItem, [{ title: name, money: 662, img: 'fk1' }, { title: `${name}*3`, money: 13, img: 'fk2' }, { title: name, money: 662, img: 'fk1' }, { title: `${name}*3`, money: 13, img: 'fk2' }, { title: name, money: 662, img: 'fk1' }, { title: `${name}*3`, money: 13, img: 'fk2' }, { title: name, money: 662, img: 'fk1' }, { title: `${name}*3`, money: 13, img: 'fk2' }],
                     (data, itemi) => {
                         const item = itemi.getChildByName('bg');
                         DBU.loadRes('/store/' + data.img, item.getChildByName('spr'));
                         DBU.loadTxt(data.title, item.getChildByName('title').getChildByName('str'));
                         DBU.loadTxt(data.money, item.getChildByName('btn').getChildByName('str'));
-                    })
+                    })    
+                }
+                
             } else {
                 child.active = false;
             }

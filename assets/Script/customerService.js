@@ -1,12 +1,4 @@
-// Learn cc.Class:
-//  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/class.html
-//  - [English] http://www.cocos2d-x.org/docs/creator/en/scripting/class.html
-// Learn Attribute:
-//  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/reference/attributes.html
-//  - [English] http://www.cocos2d-x.org/docs/creator/en/scripting/reference/attributes.html
-// Learn life-cycle callbacks:
-//  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
-//  - [English] http://www.cocos2d-x.org/docs/creator/en/scripting/life-cycle-callbacks.html
+const DBU = require('DBUtility');
 
 cc.Class({
     extends: cc.Component,
@@ -17,17 +9,17 @@ cc.Class({
             type: cc.Node,
             displayName: '微信二维码'
         },
-        noticeContent: {
+        qq: {
             default: null,
             type: cc.Node,
             displayName: 'QQ客服'
         },
-        noticeContent: {
+        wx: {
             default: null,
             type: cc.Node,
             displayName: '微信客服'
         },
-        noticeContent: {
+        wxgzh: {
             default: null,
             type: cc.Node,
             displayName: '微信公众号'
@@ -38,9 +30,22 @@ cc.Class({
 
     // onLoad () {},
 
-    start () {
+    onEnable() {
 
-    },
+        let dataCustomer={
+            appKey:cc.publicParameter.appKey,
+        }
+        DBU.setSign(dataCustomer);
+        console.log(dataCustomer);
+        
+        DBU.sendPostRequest('/hmmj-restful/common/notice/customInfo',dataCustomer,res=>{
+            let {codePic}=res.datas;
+            DBU.loadUrl(codePic,this.wxImg);
+            // 还有QQ号 微信号 没有配置
+        },err=>{
+         cc.publicMethod.hint(err.message);
+        },cc.publicParameter.infoUrl);
+    }
 
     // update (dt) {},
 });
