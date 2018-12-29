@@ -20,7 +20,7 @@ cc.Class({
             displayName: '用户信息'
         },
 
-        EVPI: {
+        evpl: {
             default: null,
             type: cc.Node,
             displayName: '完善信息'
@@ -105,7 +105,7 @@ cc.Class({
             type: cc.Node,
             displayName: '金币场'
         },
-        exploit:{
+        exploit: {
             default: null,
             type: cc.Node,
             displayName: '开发中'
@@ -211,10 +211,24 @@ cc.Class({
             type: cc.Node,
             displayName: '加入房间'
         },
-
-        storeClassName: '',
-        hallStart: '',
-        hallAniName: ''
+    topGold: {
+        default: null,
+        type: cc.Node,
+        displayName: '顶部金币'
+    },
+    topRoomCard: {
+        default: null,
+        type: cc.Node,
+        displayName: '顶部房卡'
+    },
+    topJewelNum: {
+        default: null,
+        type: cc.Node,
+        displayName: '顶部元宝'
+    },
+    storeClassName: '',
+    hallStart: '',
+    hallAniName: ''
         // : {
         //     default: null,
         //     type: cc.Node,
@@ -228,8 +242,6 @@ cc.Class({
 
     onLoad() {
         this.init();
-
-        // this.fnStore();
 
 
     },
@@ -266,8 +278,8 @@ cc.Class({
 
 
 
-        // 循环添加主大厅的点击监听
-        let hallAniOn = [this.goldField];
+        // 循环添加主大厅中部内容的点击监听
+        let hallAniOn =[this.goldField];
         hallAniOn.forEach(item => {
             item.on('touchstart', e => {
                 this.hallStart = e.target.name;
@@ -338,6 +350,30 @@ cc.Class({
         };
         intervalCallback();
         cc.publicParameter.rollID = setInterval(intervalCallback, 50000);
+
+        // 获取玩家信息改变界面
+        let userData={
+            appKey: cc.publicParameter.appKey,
+            token: cc.publicParameter.token
+        };
+        DBU.setSign(userData);
+        DBU.sendPostRequest('/hmmj-restful/player/playerInfo', userData, res => {
+            let zh=new DBU.fnQuantize(),rdata = res.datas, userName = rdata.nickName;
+
+            DBU.loadTxt(userName.length <= 4 ? userName : userName.substr(0, 4) + '...', this.headUser.getChildByName('userName'));
+            // DBU.loadTxt(rdata.sex==1?'男':'女',this.sex);
+            // DBU.loadTxt('ID:'+rdata.playerId,this.id);
+            DBU.loadUrl(zh(rdata.vipPic), this.headUser.getChildByName('vip').getChildByName('vip'));
+            DBU.loadUrl(zh(rdata.playerLogo), this.headUser.getChildByName('headMark').getChildByName('Mark').getChildByName('img'));
+            DBU.loadTxt(zh(rdata.goldNum), this.topGold);
+            DBU.loadTxt(zh( rdata.ticketNum), this.topRoomCard);
+            DBU.loadTxt(zh( rdata.jewelNum), this.topJewelNum);
+
+        }, err => {
+            cc.publicMethod.hint(err.message);
+        }, cc.publicParameter.infoUrl)
+
+
     },
     // --------------兑换充值卡-----whiteBox
     fnPrepaidCalls() {
@@ -438,37 +474,39 @@ cc.Class({
      *商店大类
      *
      */
-    fnStore(e,target) {
+    fnStore(e, target) {
         // 判断商店窗口是否打开
-        if (!this.store.active) {
-            this.fnScale('','store');            
-        }
-// 改变商店类目的选项
-        this.storeClass.forEach(item => {
-            let child = item.getChildByName('spr'), name = target ? target : 'gold';
-            if (item.name == name) {
-                child.active = true;
-                if (name=='vip') {
-                    this.store.getChildByName('multiple').active=false;
-                    this.store.getChildByName('vip').active=true;
-                } else {
-                    this.store.getChildByName('vip').active=false;
-                    this.store.getChildByName('multiple').active=true;
-                    
-                    DBU.fnCreateItem(this.store.getChildByName('multiple').getComponent(cc.ScrollView).content,
-                    this.storeItem, [{ title: name, money: 662, img: 'fk1' }, { title: `${name}*3`, money: 13, img: 'fk2' }, { title: name, money: 662, img: 'fk1' }, { title: `${name}*3`, money: 13, img: 'fk2' }, { title: name, money: 662, img: 'fk1' }, { title: `${name}*3`, money: 13, img: 'fk2' }, { title: name, money: 662, img: 'fk1' }, { title: `${name}*3`, money: 13, img: 'fk2' }],
-                    (data, itemi) => {
-                        const item = itemi.getChildByName('bg');
-                        DBU.loadRes('/store/' + data.img, item.getChildByName('spr'));
-                        DBU.loadTxt(data.title, item.getChildByName('title').getChildByName('str'));
-                        DBU.loadTxt(data.money, item.getChildByName('btn').getChildByName('str'));
-                    })    
-                }
-                
-            } else {
-                child.active = false;
-            }
-        })
+        // if (!this.store.active) {
+        //     this.fnScale('','store');            
+        // }
+
+
+        // // 改变商店类目的选项
+        //         this.storeClass.forEach(item => {
+        //             let child = item.getChildByName('spr'), name = target ? target : 'gold';
+        //             if (item.name == name) {
+        //                 child.active = true;
+        //                 if (name=='vip') {
+        //                     this.store.getChildByName('multiple').active=false;
+        //                     this.store.getChildByName('vip').active=true;
+        //                 } else {
+        //                     this.store.getChildByName('vip').active=false;
+        //                     this.store.getChildByName('multiple').active=true;
+
+        //                     DBU.fnCreateItem(this.store.getChildByName('multiple').getComponent(cc.ScrollView).content,
+        //                     this.storeItem, [{ title: name, money: 662, img: 'fk1' }, { title: `${name}*3`, money: 13, img: 'fk2' }, { title: name, money: 662, img: 'fk1' }, { title: `${name}*3`, money: 13, img: 'fk2' }, { title: name, money: 662, img: 'fk1' }, { title: `${name}*3`, money: 13, img: 'fk2' }, { title: name, money: 662, img: 'fk1' }, { title: `${name}*3`, money: 13, img: 'fk2' }],
+        //                     (data, itemi) => {
+        //                         const item = itemi.getChildByName('bg');
+        //                         DBU.loadRes('/store/' + data.img, item.getChildByName('spr'));
+        //                         DBU.loadTxt(data.title, item.getChildByName('title').getChildByName('str'));
+        //                         DBU.loadTxt(data.money, item.getChildByName('btn').getChildByName('str'));
+        //                     })    
+        //                 }
+
+        //             } else {
+        //                 child.active = false;
+        //             }
+        //         });
 
     },
     fnConversion() {

@@ -4,16 +4,7 @@ cc.Class({
     extends: cc.Component,
 
     properties: {
-        // foo: {
-        //    default: null,      // The default value will be used only when the component attaching
-        //                           to a node for the first time
-        //    url: cc.Texture2D,  // optional, default is typeof default
-        //    serializable: true, // optional, default is true
-        //    visible: true,      // optional, default is true
-        //    displayName: 'Foo', // optional
-        //    readonly: false,    // optional, default is false
-        // },
-        // ...
+       
         _isCapturing: false,
     },
 
@@ -217,42 +208,6 @@ cc.Class({
 
             }, 'http://ja5.ssssgame.com')
 
-
-
-
-            // var code = JSON.parse(code);
-            // var data = {
-            //     nickName: code.nickname,
-            //     avatarUrl: code.headimgurl,
-            //     openId: code.openid,
-            //     wxUnionid: code.unionid,
-            //     sex: code.sex
-            // };
-
-            // cc.static.HTTP.sendPostRequest("/hmmj-restful/player/login/access_token", data, function (ret) {
-            //     //  cc.publicMethod.hint(JSON.stringify(ret));
-            //     if (ret.code == 0) {
-            //         var dt = ret.data;
-            //         var userinfo = {
-            //             token: dt.token,
-            //             id: dt.id,
-            //             mobile: dt.mobile,
-            //             sex: dt.sex,
-            //             userName: dt.userName,
-            //             avatarUrl: dt.avatarUrl,
-            //             integral: dt.integral,
-            //         };
-            //         cc.sys.localStorage.setItem('userData', JSON.stringify(userinfo));
-            //         cc.sys.localStorage.setItem('state', "1");//记录为微信的登录状态
-
-            //         cc.static.loginSuccess();
-
-            //     } else {
-            //         cc.static.usersMessageFn(ret.message, -400);
-            //     }
-            // }, function (err) {
-            //     cc.static.usersMessageFn("网络异常");
-            // }, cc.static.url);
         }, 2000);
     },
 });

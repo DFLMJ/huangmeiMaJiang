@@ -12,7 +12,7 @@ cc.publicParameter = {
     infoUrl: '/mjDL',
     appKey: 'app',
     // 用户的后台token 有效期24小时
-    token: '45036f60fc2399d7d82bb3062f71a21a',
+    token: '1aa03f8b10eb8b543b23fa2935813910',
     // app签名 暂未配置DBU里面的签名 所以暂无影响
     CAdES: '4bcaf7499b59888we9e0egbccdmcdcfb',
     rollID: null,

@@ -1,41 +1,96 @@
-// Learn cc.Class:
-//  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/class.html
-//  - [English] http://www.cocos2d-x.org/docs/creator/en/scripting/class.html
-// Learn Attribute:
-//  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/reference/attributes.html
-//  - [English] http://www.cocos2d-x.org/docs/creator/en/scripting/reference/attributes.html
-// Learn life-cycle callbacks:
-//  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
-//  - [English] http://www.cocos2d-x.org/docs/creator/en/scripting/life-cycle-callbacks.html
+const DBU = require('DBUtility');
 
 cc.Class({
     extends: cc.Component,
 
     properties: {
-        // foo: {
-        //     // ATTRIBUTES:
-        //     default: null,        // The default value will be used only when the component attaching
-        //                           // to a node for the first time
-        //     type: cc.SpriteFrame, // optional, default is typeof default
-        //     serializable: true,   // optional, default is true
-        // },
-        // bar: {
-        //     get () {
-        //         return this._bar;
-        //     },
-        //     set (value) {
-        //         this._bar = value;
-        //     }
+        userName: {
+            default: null,
+            type: cc.Node,
+            displayName: '用户名'
+        },
+        userImg: {
+            default: null,
+            type: cc.Node,
+            displayName: '用户头像'
+        },
+        id: {
+            default: null,
+            type: cc.Node,
+            displayName: '用户id'
+        },
+        ip: {
+            default: null,
+            type: cc.Node,
+            displayName: 'ip'
+        },
+        gold: {
+            default: null,
+            type: cc.Node,
+            displayName: '金币'
+        },
+        roomCard: {
+            default: null,
+            type: cc.Node,
+            displayName: '房卡'
+        },
+        vip: {
+            default: null,
+            type: cc.Node,
+            displayName: '用户vip'
+        },
+        sex: {
+            default: null,
+            type: cc.Node,
+            displayName: '性别'
+        },
+        ingot: {
+            default: null,
+            type: cc.Node,
+            displayName: '元宝'
+        },
+
+        // : {
+        //     default: null,
+        //     type: cc.Node,
+        //     displayName: ''
         // },
     },
+    onEnable(){
+        let data={
+            appKey:cc.publicParameter.appKey,
+            token:cc.publicParameter.token
+        };
+        DBU.setSign(data);
+        DBU.sendPostRequest('/hmmj-restful/player/playerInfo',data,res=>{
+            let rdata=res.datas;
+            
+            DBU.loadTxt(rdata.nickName,this.userName);
+            DBU.loadTxt(rdata.sex==1?'男':'女',this.sex);
+            DBU.loadTxt('ID:'+rdata.playerId,this.id);
+            DBU.loadTxt(rdata.vipName==''?'小主还没开通哟！':rdata.vipName,this.vip);
+            DBU.loadUrl(rdata.playerLogo,this.userImg);
+            DBU.loadTxt(rdata.goldNum,this.gold);
+            DBU.loadTxt(rdata.ticketNum,this.roomCard);
+            DBU.loadTxt('IP:'+rdata.ip,this.ip);
+            DBU.loadTxt(rdata.jewelNum,this.ingot);
 
-    // LIFE-CYCLE CALLBACKS:
-
-    // onLoad () {},
-
-    start () {
-
+        },err=>{
+            cc.publicMethod.hint(err.message);
+        },cc.publicParameter.infoUrl)
     },
 
-    // update (dt) {},
+    // onEnable(){
+    //     let data={
+    //         appKey:cc.publicParameter.appKey,
+    //         token:cc.publicParameter.token
+    //     }
+    //     DBU.setSign(data);
+    //     DBU.sendPostRequest('/hmmj-restful/player/playerInfo',data,res=>{
+
+    //     },err=>{
+    //         cc.publicMethod.hint(err.message);
+    //     })
+    // }
+
 });

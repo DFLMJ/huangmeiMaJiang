@@ -10,17 +10,22 @@ cc.Class({
             displayName: '内容'
         },
     },
-    sendFeedBack(){
+
+    // LIFE-CYCLE CALLBACKS:
+
+    // onLoad () {},
+
+    onEnable(){
         let data={
             appKey:cc.publicParameter.appKey,
-            token:cc.publicParameter.token,
-            feedbackContent:this.content.getComponent(cc.EditBox).string
+            token:cc.publicParameter.token
         }
         DBU.setSign(data);
-        DBU.sendPostRequest('/hmmj-restful/player/feedback/addFeedback',data,res=>{
-            cc.publicMethod.hint(res.message);
+        DBU.sendPostRequest('/hmmj-restful/common/playRule/playRuleInfo',data,res=>{
+            DBU.loadTxt(res.datas.ruleContent,this.content);
         },err=>{
             cc.publicMethod.hint(err.message);
-        },cc.publicParameter.infoUrl);
+        },cc.publicParameter.infoUrl)
     }
+    // update (dt) {},
 });

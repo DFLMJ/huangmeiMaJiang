@@ -36,12 +36,15 @@ cc.Class({
             appKey:cc.publicParameter.appKey,
         }
         DBU.setSign(dataCustomer);
-        console.log(dataCustomer);
-        
-        DBU.sendPostRequest('/hmmj-restful/common/notice/customInfo',dataCustomer,res=>{
-            let {codePic}=res.datas;
-            DBU.loadUrl(codePic,this.wxImg);
-            // 还有QQ号 微信号 没有配置
+       
+        DBU.sendPostRequest('/hmmj-restful/common/custom/customInfo',dataCustomer,res=>{
+            
+            let {codePic,wechatNo,publicNo,nickName}=res.datas;
+            DBU.loadUrl(cc.publicParameter.infoUrl+codePic,this.wxImg);
+            DBU.loadTxt(wechatNo,this.wx);
+            DBU.loadTxt(nickName,this.qq);
+            DBU.loadTxt(publicNo,this.wxgzh);
+            // QQ号 没有配置
         },err=>{
          cc.publicMethod.hint(err.message);
         },cc.publicParameter.infoUrl);
