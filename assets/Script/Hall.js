@@ -242,8 +242,6 @@ cc.Class({
 
     onLoad() {
         this.init();
-
-
     },
     fnScale: DBU.fnScale,
     init() {
@@ -475,6 +473,12 @@ cc.Class({
      *
      */
     fnStore(e, target) {
+        cc.director.GlobalEvent.emit('storeClass',{target:target})
+
+
+
+
+
         // 判断商店窗口是否打开
         // if (!this.store.active) {
         //     this.fnScale('','store');            

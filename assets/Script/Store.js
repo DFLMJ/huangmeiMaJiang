@@ -32,29 +32,16 @@ cc.Class({
         this.store = this.node;
         this.modalBg = cc.find('Canvas/modalBox/bg');
         this.storeClass = cc.find('Canvas/modalBox/modal/store/menu').children;
+        // 监听商店商店类别按钮
+        cc.director.GlobalEvent.on('storeClass', data => {
+            console.log(data);
+            if (!this.node.scaleX == 1) {
+                DBU.fnScale.bind(this)('', 'store');
+            }
+            this.fnUpdateMenu(-1, data.target);
+        })
     },
 
-    onEnable() {
-        // let data={
-        //     appKey:cc.publicParameter.appKey,
-        //     token:cc.publicParameter.token
-        // }
-        // DBU.setSign(data);
-
-        // //请求金币配置
-        // DBU.sendPostRequest('/hmmj-restful/account/goldRechargeConfig/list',data,res=>{
-
-        // },err=>{
-        //     cc.publicMethod.hint(err.message);
-        // })
-
-
-        // 判断商店窗口是否打开
-        if (!this.active) {
-            DBU.fnScale.bind(this)('', 'store');
-        }
-        this.fnUpdateMenu();
-    },
     fnUpdateMenu(e, target) {
         // 改变商店类目的选项
         let menu = this.node.getChildByName('menu').children;
@@ -74,7 +61,7 @@ cc.Class({
                     DBU.setSign(AjaxData);
                     DBU.sendPostRequest('/hmmj-restful/account/vipRechargeConfig/list', AjaxData, res => {
                         let datas = res.datas['vipRechargeConfigList'];
-                        console.log(datas);
+                        // console.log(datas);
 
                         this.fnCd(datas);
 
@@ -103,7 +90,7 @@ cc.Class({
                         DBU.fnCreateItem(this.store.getChildByName('multiple').getComponent(cc.ScrollView).content,
                             this.storeItem, res.datas[dName + 'RechargeConfigList'],
                             (data, itemi) => {
-                                console.log(itemi);
+                                // console.log(itemi);
                                 const item = itemi.getChildByName('bg');
                                 DBU.loadUrl(cc.publicParameter.infoUrl + data[dName + 'Pic'], item.getChildByName('spr'));
                                 DBU.loadTxt(data[dName + 'Name'], item.getChildByName('title').getChildByName('str'));
@@ -144,11 +131,11 @@ cc.Class({
             // 填充当前页需要填充的商品个数
             for (let index = 0; index < itemNum; index++) {
                 const item = page.children[index];
-                console.log(item);
+                // console.log(item);
 
                 // 判断当前商品数是否有数据展示，如果没有的话就隐藏
                 if (index < (pageNum == (data.len - 1) ? data.remainder : itemNum)) {
-                    console.log(data, pageNum * itemNum + index);
+                    // console.log(data, pageNum * itemNum + index);
 
                     let datas = data[pageNum * itemNum + index];
                     // 数据索引 等于 当前页数乘上 每页显示的个数再加当前页商品的索引数

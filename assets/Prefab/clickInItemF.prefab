@@ -319,7 +319,7 @@
     },
     "_enabled": true,
     "_spriteFrame": {
-      "__uuid__": "8cdb44ac-a3f6-449f-b354-7cd48cf84061"
+      "__uuid__": "9175d528-148c-4d63-a618-e8d334396335"
     },
     "_type": 0,
     "_sizeMode": 0,
@@ -382,8 +382,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 90,
-      "height": 30
+      "width": 134,
+      "height": 60
     },
     "_rotationX": 0,
     "_rotationY": 0,
@@ -410,8 +410,8 @@
     },
     "_enabled": true,
     "_useOriginalSize": false,
-    "_actualFontSize": 30,
-    "_fontSize": 30,
+    "_actualFontSize": 25,
+    "_fontSize": 25,
     "_lineHeight": 30,
     "_enableWrapText": true,
     "_N$file": {
@@ -419,8 +419,8 @@
     },
     "_isSystemFontUsed": false,
     "_spacingX": 0,
-    "_N$string": "第一天",
-    "_N$horizontalAlign": 1,
+    "_N$string": "金币：1513\n房卡：562",
+    "_N$horizontalAlign": 0,
     "_N$verticalAlign": 1,
     "_N$fontFamily": "Arial",
     "_N$overflow": 0

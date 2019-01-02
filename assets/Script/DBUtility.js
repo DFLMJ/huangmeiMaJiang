@@ -1,4 +1,4 @@
-cc.static={};
+cc.static = {};
 //获取md5.min.js 资源 cc.static.crypto.md5(str);
 cc.static.md5Sign = require('./Tool/md5.min');
 var DBUtility = {
@@ -17,27 +17,27 @@ var DBUtility = {
             max = Math.floor(iZero);
         return Math.floor(Math.random() * (max - min)) + min;
     },
-     /**
-     * 为数字加上单位：万或亿
-     *
-     * 例如：
-     *      1000.01 => 1000.01
-     *      10000 => 1万
-     *      99000 => 9.9万
-     *      566000 => 56.6万
-     *      5660000 => 566万
-     *      44440000 => 4444万
-     *      11111000 => 1111.1万
-     *      444400000 => 4.44亿
-     *      40000000,00000000,00000000 => 4000万亿亿
-     *      4,00000000,00000000,00000000 => 4亿亿亿
-     *
-     * @param {number} number 输入数字.
-     * @param {number} decimalDigit 小数点后最多位数，默认为2
-     * @return {string} 加上单位后的数字
-     */
+    /**
+    * 为数字加上单位：万或亿
+    *
+    * 例如：
+    *      1000.01 => 1000.01
+    *      10000 => 1万
+    *      99000 => 9.9万
+    *      566000 => 56.6万
+    *      5660000 => 566万
+    *      44440000 => 4444万
+    *      11111000 => 1111.1万
+    *      444400000 => 4.44亿
+    *      40000000,00000000,00000000 => 4000万亿亿
+    *      4,00000000,00000000,00000000 => 4亿亿亿
+    *
+    * @param {number} number 输入数字.
+    * @param {number} decimalDigit 小数点后最多位数，默认为2
+    * @return {string} 加上单位后的数字
+    */
     fnQuantize() {
-        var addWan = function(integer, number, mutiple, decimalDigit) {
+        var addWan = function (integer, number, mutiple, decimalDigit) {
             var digit = getDigit(integer);
             if (digit > 3) {
                 var remainder = digit % 8;
@@ -50,7 +50,7 @@ var DBUtility = {
             }
         };
 
-        var getDigit = function(integer) {
+        var getDigit = function (integer) {
             var digit = -1;
             while (integer >= 1) {
                 digit++;
@@ -59,7 +59,7 @@ var DBUtility = {
             return digit;
         };
 
-        return  function(number, decimalDigit) {
+        return function (number, decimalDigit) {
             decimalDigit = decimalDigit == null ? 1 : decimalDigit;
             var integer = Math.floor(number);
             var digit = getDigit(integer);
@@ -136,7 +136,7 @@ var DBUtility = {
      * @param {*} Node 需要更改的spriteFrame节点
      * @param {*} [Type=cc.SpriteFrame] 资源类型，默认为cc.SpriteFrame
      */
-    loadRes(Path, Node, Type=cc.SpriteFrame){
+    loadRes(Path, Node, Type = cc.SpriteFrame) {
         cc.loader.loadRes(Path, Type, function (err, spriteFrame) {
             Node.getComponent(cc.Sprite).spriteFrame = spriteFrame;
         });
@@ -148,7 +148,7 @@ var DBUtility = {
      * @param {Node} ccNode  需要更改的节点
      */
     loadTxt(Txt, ccNode) {
-        ccNode.getComponent(ccNode.getComponent(cc.Label)?cc.Label:cc.RichText).string = Txt;
+        ccNode.getComponent(ccNode.getComponent(cc.Label) ? cc.Label : cc.RichText).string = Txt;
     },
     /**
      * 缩放窗口
@@ -170,27 +170,42 @@ var DBUtility = {
      * @param {*} e 点击事件的对象
      * @param {*} target 点击事件传递的模态框名字
      */
-    fnScale(e, target,callBack) {
-        let t1=target.split(',')[0];
-        if (target.split(',').length>1) {
+    fnScale(e, target, callBack) {
+        let t1 = target.split(',')[0];
+        if (target.split(',').length > 1) {
             callBack();
         }
         // console.log(this[target].active);
-        if (!this[t1].active) {
-            this[t1].active=true;
-            this[t1].runAction(cc.sequence(cc.scaleTo(0.1, 1.1, 1.2), cc.scaleTo(0.1, 1, 1)));
-            this.modalBg.active = true;    
+        if (!this[t1].scaleX == 1) {
+            // this[t1].active=true;
+            console.log(6);
+
+            this[t1].runAction(cc.sequence(cc.scaleTo(0, 1, 1), cc.scaleTo(0.1, 1.1, 1.2), cc.scaleTo(0.1, 1, 1)));
+            this.modalBg.runAction(cc.scaleTo(0, 1, 1));
         }
-        
+
     },
     /**
      * 给关闭按钮添加监听事件
      *
      * @param {*} e
      */
-    fnCloseBtn(e){
-        e.target.parent.active=false;        
-        this.modalBg.active = false;
+    fnCloseBtn(e) {
+        // e.target.parent.active=false;        
+        // this.modalBg.active = false;
+        e.target.parent.runAction(cc.scaleTo(0, 0, 0));
+        let i = 0;
+        e.target.parent.parent.children.forEach(item => {
+            if (item.scaleX != 0) {
+                i++;
+            };
+        })
+        console.log(i,'i');
+        
+        if (i == 1) {
+            this.modalBg.runAction(cc.scaleTo(0, 0, 0));
+        }
+
     },
     /**
      * 提示语窗口
@@ -201,7 +216,7 @@ var DBUtility = {
         // 获取提示框节点
         let str = cc.find('Tips/txt');
         // 更改文字
-        this.loadTxt(Txt,str);
+        this.loadTxt(Txt, str);
         let ani = cc.sequence(cc.spawn(cc.fadeIn(0.3), cc.scaleTo(0.3, 1)), cc.delayTime(2), cc.spawn(cc.fadeOut(0.3), cc.scaleTo(0.3, 0)));
         // 执行动作
         str.parent.runAction(ani);
@@ -220,10 +235,10 @@ var DBUtility = {
             // item.parent=null;
             item.destroy();
         })
-        for (let index = 0; index < (data.len?data.len: data.length); index++) {
+        for (let index = 0; index < (data.len ? data.len : data.length); index++) {
             const item = cc.instantiate(pre);
             callBack(data[index], item);
-            item.parent=target;
+            item.parent = target;
         }
     },
 
@@ -234,24 +249,24 @@ var DBUtility = {
      * @param {*} method
      * @param {*} callBack
      */
-    ajax(data,method,callBack){
+    ajax(data, method, callBack) {
         // const xml
         // Promise()
 
     },
 
 
-     /**
-      *发送Get请求
-      *
-      * @param {String} path 接口方法地址(除去接口域名地址及端口的地址)
-      * @param {JSON} data 参数json
-      * @param {Function} handler 成功返回回调
-      * @param {Function} error 异常返回回调
-      * @param {String} extraUrl 接口域名地址及端口
-      * @returns {Object} 结果集
-      */
-     sendGetRequest(path, data, handler, error, extraUrl) {
+    /**
+     *发送Get请求
+     *
+     * @param {String} path 接口方法地址(除去接口域名地址及端口的地址)
+     * @param {JSON} data 参数json
+     * @param {Function} handler 成功返回回调
+     * @param {Function} error 异常返回回调
+     * @param {String} extraUrl 接口域名地址及端口
+     * @returns {Object} 结果集
+     */
+    sendGetRequest(path, data, handler, error, extraUrl) {
         var xhr = cc.loader.getXMLHttpRequest();
         xhr.timeout = 5000;//设置请求超时
         var str = "?";
@@ -282,7 +297,7 @@ var DBUtility = {
                     error && error(e, xhr)
                 }
                 finally {
-                    
+
                 }
             }
         };
@@ -351,35 +366,35 @@ var DBUtility = {
     setSign(params) {
         // 按字典排序
         var raw = function (args) {
-          var keys = Object.keys(args);
-          keys = keys.sort()
-          var newArgs = {};
-          keys.forEach(function (key) {
-            if (key == 'sign') {
-              return;
+            var keys = Object.keys(args);
+            keys = keys.sort()
+            var newArgs = {};
+            keys.forEach(function (key) {
+                if (key == 'sign') {
+                    return;
+                }
+                newArgs[key] = args[key];
+            });
+
+            var string = '';
+            for (var k in newArgs) {
+                string += k + '=' + newArgs[k];
             }
-            newArgs[key] = args[key];
-          });
-  
-          var string = '';
-          for (var k in newArgs) {
-            string += k + '=' + newArgs[k];
-          }
-          //签名规则
-          string += '4bcaf7499b59888we9e0egbccdmcdcfb';
-          return string;
+            //签名规则
+            string += '4bcaf7499b59888we9e0egbccdmcdcfb';
+            return string;
         };
         //md5加密
         var string = cc.static.md5Sign(raw(params));
         params.sign = string;
         return params;
-      }
+    }
 
 
 
 }
 
-cc.DBUtility=DBUtility;
+cc.DBUtility = DBUtility;
 
 
 // 全局事件派发事件
@@ -391,7 +406,7 @@ cc.director.GlobalEvent = {
 
         data.eventName = eventName//保存一下事件名字
 
-        for ( var findEvenName in this.handles_ ){
+        for (var findEvenName in this.handles_) {
             if (findEvenName == eventName) {
                 for (var i = 0; i < this.handles_[findEvenName].length; i++) {
                     var returnValue = this.handles_[findEvenName][i](data)

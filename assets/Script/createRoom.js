@@ -76,7 +76,7 @@ cc.Class({
             for (const key in this.parameter) {
                 if (this.parameter.hasOwnProperty(key)) {
                     if (child.name == key) {
-                        console.log(child.name);
+                        // console.log(child.name);
                         if (child.getComponent(cc.ToggleContainer).toggleItems) {
                             
                         } 
@@ -100,10 +100,10 @@ cc.Class({
                                         return;
                                     }
                                     if (isDataChild?isDataChild==i:false) {
-                                        console.log('应该选中',i,item.name);
+                                        // console.log('应该选中',i,item.name);
                                         
                                         item.isChecked=true;               
-                                        console.log(item.name,item.isChecked);
+                                        // console.log(item.name,item.isChecked);
                                                                
                                     } else {
                                         this.parameter[child.name] = i;
@@ -132,7 +132,7 @@ cc.Class({
      */
     getValue(e, val) {
         this.parameter[e.target.parent.name] = val;
-        console.log(this.parameter[e.target.parent.name], e.target.parent.name);
+        // console.log(this.parameter[e.target.parent.name], e.target.parent.name);
     },
 
     /**
@@ -150,7 +150,7 @@ cc.Class({
     sendRoom() {
         this.refreshData({});
         for (const l in this.parameter) {
-            console.log(l, this.parameter[l]);
+            // console.log(l, this.parameter[l]);
         }
         cc.DBUtility.sendPostRequest('')
     }

@@ -12,29 +12,45 @@ cc.Class({
     extends: cc.Component,
 
     properties: {
-        // foo: {
-        //     // ATTRIBUTES:
-        //     default: null,        // The default value will be used only when the component attaching
-        //                           // to a node for the first time
-        //     type: cc.SpriteFrame, // optional, default is typeof default
-        //     serializable: true,   // optional, default is true
-        // },
-        // bar: {
-        //     get () {
-        //         return this._bar;
-        //     },
-        //     set (value) {
-        //         this._bar = value;
-        //     }
-        // },
+        yesBtn: {
+            default: null,
+            type: cc.Node,
+            displayName: '确认'
+        },
+        ID: {
+            default: null,
+            type: cc.Node,
+            displayName: '身份证'
+        },
+        phoneNum: {
+            default: null,
+            type: cc.Node,
+            displayName: '电话'
+        },
+        userName: {
+            default: null,
+            type: cc.Node,
+            displayName: '姓名'
+        },
     },
 
     // LIFE-CYCLE CALLBACKS:
 
     // onLoad () {},
 
-    start () {
-
+    smrz () {
+        let data={
+            appKey:cc.publicParameter.appKey,
+            token:cc.publicParameter.token,
+            trueName:this.userName,
+            phone:this.phone
+        }
+        DBU.setSign(data);
+        DBU.sendPostRequest('/hmmj-restful/player/updateTrueNameAndPhone',data,res=>{
+            cc.publicMethod.hint(res.message)
+        },err=>{
+            cc.publicMethod.hint(err.message);
+        },cc.publicParameter.infoUrl)
     },
 
     // update (dt) {},
