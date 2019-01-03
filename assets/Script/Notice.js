@@ -21,7 +21,7 @@ cc.Class({
         }
         DBU.setSign(dataNotice);
         DBU.sendPostRequest('/hmmj-restful/common/notice/noticeList',dataNotice,res=>{
-            console.log(res.datas.list,res.datas.list[0].noticeTitle);
+            // console.log(res.datas.list,res.datas.list[0].noticeTitle);
             
             DBU.loadTxt(res.datas.list[0].noticeTitle,this.noticeTitle);
             DBU.loadTxt(res.datas.list[0].noticeContent,this.noticeContent);

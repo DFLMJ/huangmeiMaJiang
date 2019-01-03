@@ -1,39 +1,46 @@
-// Learn cc.Class:
-//  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/class.html
-//  - [English] http://www.cocos2d-x.org/docs/creator/en/scripting/class.html
-// Learn Attribute:
-//  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/reference/attributes.html
-//  - [English] http://www.cocos2d-x.org/docs/creator/en/scripting/reference/attributes.html
-// Learn life-cycle callbacks:
-//  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
-//  - [English] http://www.cocos2d-x.org/docs/creator/en/scripting/life-cycle-callbacks.html
+const DBU = require('DBUtility');
 
 cc.Class({
     extends: cc.Component,
 
     properties: {
-        // foo: {
-        //     // ATTRIBUTES:
-        //     default: null,        // The default value will be used only when the component attaching
-        //                           // to a node for the first time
-        //     type: cc.SpriteFrame, // optional, default is typeof default
-        //     serializable: true,   // optional, default is true
-        // },
-        // bar: {
-        //     get () {
-        //         return this._bar;
-        //     },
-        //     set (value) {
-        //         this._bar = value;
-        //     }
-        // },
+        content: {
+            default: null,
+            type: cc.Node,
+            displayName: '领取内容'
+        },
     },
 
     // LIFE-CYCLE CALLBACKS:
 
-    // onLoad () {},
+    onLoad() {
+        let data = {
+            appKey: cc.publicParameter.appKey,
+            token: cc.publicParameter.token,
+        }
+        DBU.setSign(data);
 
-    start () {
+        // 获取每日赠送配置
+        DBU.sendPostRequest('/hmmj-restful/task/dayGive/info', data, res => {
+            DBU.loadTxt(new DBU.fnQuantize()(res.datas.giveGoldNum) + '金币', this.content.getChildByName('goldNum'));
+            DBU.loadTxt(res.datas.dayGiveNum + '次', this.content.getChildByName('num'));
+            this.content.getChildByName('btn').on('touchstart', e => {
+                // 发送领取金币请求
+                DBU.sendPostRequest('/hmmj-restful/task/dayGive/playerDayGive', data, res => {
+                    cc.publicMethod.hint(res.message)
+                }, err => {
+                    cc.publicMethod.hint(err.message);
+                }, cc.publicParameter.infoUrl)
+            })
+            this.content.getChildByName('goldNum');
+            cc.publicMethod.hint(res.message)
+        }, err => {
+            cc.publicMethod.hint(err.message);
+        }, cc.publicParameter.infoUrl)
+
+    },
+
+    start() {
 
     },
 

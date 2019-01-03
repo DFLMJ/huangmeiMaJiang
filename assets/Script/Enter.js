@@ -90,7 +90,7 @@ cc.Class({
 
         // 登录回调
         let login = (e) => {
-            console.log(e.target.mjid);
+            // console.log(e.target.mjid);
 
             if (clickAgree.isChecked) {
                 cc.director.loadScene('Hall')

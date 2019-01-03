@@ -42,7 +42,7 @@ cc.Class({
         showNumberReverse.reverse();
 
         keyArr.forEach(item => {
-            console.log(item.name);
+            // console.log(item.name);
             
             if (item.name == 'btn') {
                 numArr.push(item);
@@ -89,9 +89,3 @@ cc.Class({
 
     // update (dt) {},
 });
-
-let ad = [0, 2, 9, 6].dd = 'mj';
-for (const iterator of ad) {
-    console.log(iterator);
-
-}

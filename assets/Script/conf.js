@@ -16,11 +16,13 @@ cc.publicParameter = {
     // app签名 暂未配置DBU里面的签名 所以暂无影响
     CAdES: '4bcaf7499b59888we9e0egbccdmcdcfb',
     rollID: null,
+    // 定时器集合
+    setIntervalArr:[]
 }
 cc.publicMethod = {
     hint: function (str) {
-        DBU.loadTxt(str, cc.find('tips/str'));
+        DBU.loadTxt(str, cc.find('tips/tips/str'));
         cc.find('tips').stopAllActions();
         cc.find('tips').runAction(cc.sequence(cc.scaleTo(0,1), cc.delayTime(1), cc.scaleTo(0,0)));
-    }
+    },
 }

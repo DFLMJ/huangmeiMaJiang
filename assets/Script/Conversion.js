@@ -79,7 +79,7 @@ cc.Class({
                     let { goodsId: goodsId, goodsLogo: goodsLogo, goodsName: goodsName, jewelNum: jewelNum } = data[pageNum * itemNum + index];
                     // 数据索引 等于 当前页数乘上 每页显示的个数再加当前页商品的索引数
                     item.goodsId = goodsId;
-                    console.log(goodsLogo);
+                    // console.log(goodsLogo);
                     DBU.loadUrl(cc.publicParameter.infoUrl + goodsLogo, item.getChildByName('conversion').getChildByName('sprBg'));
                     DBU.loadTxt(goodsName, item.getChildByName('conversion').getChildByName('str'));
                     DBU.loadTxt(jewelNum, item.getChildByName('je').getChildByName('money'));

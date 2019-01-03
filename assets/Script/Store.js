@@ -115,7 +115,7 @@ cc.Class({
     },
     fnCd(data) {
         // 移除指定页面
-        console.log(this.node.getChildByName('vip').getComponent(cc.PageView));
+        // console.log(this.node.getChildByName('vip').getComponent(cc.PageView));
         let PageView = this.node.getChildByName('vip').getChildByName('view').getComponent(cc.PageView);
         PageView.removeAllPages();
         let pageNum = 0, itemNum = 4;
