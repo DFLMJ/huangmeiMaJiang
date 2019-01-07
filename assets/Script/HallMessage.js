@@ -23,7 +23,7 @@ cc.Class({
         // 获取每日赠送配置
         DBU.sendPostRequest('/hmmj-restful/task/dayGive/info', data, res => {
             DBU.loadTxt(new DBU.fnQuantize()(res.datas.giveGoldNum) + '金币', this.content.getChildByName('goldNum'));
-            DBU.loadTxt(res.datas.dayGiveNum + '次', this.content.getChildByName('num'));
+            DBU.loadTxt(res.datas.dayGiveNum + '次', this.content.getChildByName('num'));            
             this.content.getChildByName('btn').on('touchstart', e => {
                 // 发送领取金币请求
                 DBU.sendPostRequest('/hmmj-restful/task/dayGive/playerDayGive', data, res => {

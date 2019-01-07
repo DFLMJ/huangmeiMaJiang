@@ -1,12 +1,4 @@
-// Learn cc.Class:
-//  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/class.html
-//  - [English] http://www.cocos2d-x.org/docs/creator/en/scripting/class.html
-// Learn Attribute:
-//  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/reference/attributes.html
-//  - [English] http://www.cocos2d-x.org/docs/creator/en/scripting/reference/attributes.html
-// Learn life-cycle callbacks:
-//  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
-//  - [English] http://www.cocos2d-x.org/docs/creator/en/scripting/life-cycle-callbacks.html
+const DBU = require('DBUtility');
 
 cc.Class({
     extends: cc.Component,
@@ -32,25 +24,48 @@ cc.Class({
             type: cc.Node,
             displayName: '姓名'
         },
+        dsSerName: {
+            default: null,
+            type: cc.Node,
+            displayName: '不可修改姓名'
+        },
     },
 
     // LIFE-CYCLE CALLBACKS:
 
-    // onLoad () {},
-
-    smrz () {
-        let data={
-            appKey:cc.publicParameter.appKey,
-            token:cc.publicParameter.token,
-            trueName:this.userName,
-            phone:this.phone
+    onLoad () {
+        cc.publicParameter.infoObj.trueName.push(this.dsSerName);
+    },
+    onEnable() {
+        if (cc.publicParameter.userInfo.trueName) {
+            cc.publicMethod.upData(['trueName']);
+            this.dsSerName.active=true;
+            this.userName.active=false;
+        }else{
+            this.dsSerName.active=false;
+            this.userName.active=true;
+        }
+    },
+    smrz() {
+        // console.log(this.userName.getComponent(cc.EditBox).string);
+        let phoneNum = DBU.getEditboxStr(this.phoneNum);
+        if (isNaN(phoneNum) || phoneNum.length < 10) {
+            cc.publicMethod.hint('请输入正确的手机号码');
+            return;
+        }
+        let data = {
+            appKey: cc.publicParameter.appKey,
+            token: cc.publicParameter.token,
+            trueName: DBU.getEditboxStr(this.userName)||cc.publicParameter.userInfo.trueName,
+            phone: phoneNum
         }
         DBU.setSign(data);
-        DBU.sendPostRequest('/hmmj-restful/player/updateTrueNameAndPhone',data,res=>{
+        DBU.sendPostRequest('/hmmj-restful/player/updateTrueNameAndPhone', data, res => {
+
             cc.publicMethod.hint(res.message)
-        },err=>{
+        }, err => {
             cc.publicMethod.hint(err.message);
-        },cc.publicParameter.infoUrl)
+        }, cc.publicParameter.infoUrl)
     },
 
     // update (dt) {},

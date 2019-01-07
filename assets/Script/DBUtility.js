@@ -130,6 +130,15 @@ var DBUtility = {
     },
 
     /**
+     *获取editbox的输入内容，需要传入节点
+     *
+     * @param {node} node 需要获取内容的
+     * @returns {String} 内容
+     */
+    getEditboxStr(node) {
+        return node.getComponent(cc.EditBox).string;
+    },
+    /**
      *加载位于 resources 文件夹下的资源
      *
      * @param {*} Path 图片地址
@@ -171,17 +180,33 @@ var DBUtility = {
      * @param {*} target 点击事件传递的模态框名字
      */
     fnScale(e, target, callBack) {
+
+        // let t1 = target.split(',')[0];
+        // if (target.split(',').length > 1) {
+        //     callBack();
+        // }
+        // // console.log(this[target].active);
+        // if (!this[t1].scaleX == 1) {
+        //     // this[t1].active=true;
+        //     console.log(6);
+
+        //     this[t1].runAction(cc.sequence(cc.scaleTo(0, 1, 1), cc.scaleTo(0.1, 1.1, 1.2), cc.scaleTo(0.1, 1, 1)));
+        //     this.modalBg.runAction(cc.scaleTo(0, 1, 1));
+        // }
+
+
+
         let t1 = target.split(',')[0];
         if (target.split(',').length > 1) {
             callBack();
         }
         // console.log(this[target].active);
-        if (!this[t1].scaleX == 1) {
+        if (!this[t1].active == true) {
             // this[t1].active=true;
             console.log(6);
-
-            this[t1].runAction(cc.sequence(cc.scaleTo(0, 1, 1), cc.scaleTo(0.1, 1.1, 1.2), cc.scaleTo(0.1, 1, 1)));
-            this.modalBg.runAction(cc.scaleTo(0, 1, 1));
+            this[t1].active = true;
+            this[t1].runAction(cc.sequence(cc.scaleTo(0.1, 1.1, 1.2), cc.scaleTo(0.1, 1, 1)));
+            this.modalBg.active = true;
         }
 
     },
@@ -193,18 +218,40 @@ var DBUtility = {
     fnCloseBtn(e) {
         // e.target.parent.active=false;        
         // this.modalBg.active = false;
-        e.target.parent.runAction(cc.scaleTo(0, 0, 0));
+
+
+        // e.target.parent.runAction(cc.scaleTo(0, 0, 0));
+        // let i = 0;
+        // e.target.parent.parent.children.forEach(item => {
+        //     if (item.scaleX != 0) {
+        //         i++;
+        //     };
+        // })
+        // console.log(i,'i');
+
+        // if (i == 1) {
+        //     // this.modalBg.runAction(cc.scaleTo(0, 0, 0));
+        //     this.modalBg.active=false;
+        // }
+
+
+
+        e.target.parent.active = false;
         let i = 0;
         e.target.parent.parent.children.forEach(item => {
-            if (item.scaleX != 0) {
+            if (item.active != false) {
+                console.log(item.active);
+
                 i++;
             };
         })
-        console.log(i,'i');
-        
-        if (i == 1) {
-            this.modalBg.runAction(cc.scaleTo(0, 0, 0));
+        console.log(i, 'i');
+
+        if (i == 0) {
+            // this.modalBg.runAction(cc.scaleTo(0, 0, 0));
+            this.modalBg.active = false;
         }
+
 
     },
     /**
@@ -340,7 +387,7 @@ var DBUtility = {
 
                         //     return;
                         // }
-                        if (ret.result != 0 && ret.result != 1) {
+                        if (ret.result != 0 && ret.result != 1 && ret.code != 0) {
                             cc.publicMethod.hint(ret.message);
                             return;
                         }
@@ -388,7 +435,29 @@ var DBUtility = {
         var string = cc.static.md5Sign(raw(params));
         params.sign = string;
         return params;
-    }
+    },
+     
+     /**
+      *工具方法：获取链接地址
+      *
+      * @returns {Object} 
+      */
+     fnGetRequest() {
+        //获取url中"?"符后的字串
+        var url = window.location.search;
+        console.log("得到的：" + url);
+        var theRequest = new Object();
+        if (url.indexOf("?") != -1) {
+            var str = url.substr(1);
+            var strs = str.split("&");
+            for (var i = 0; i < strs.length; i++) {
+                theRequest[strs[i].split("=")[0]] = unescape(strs[i].split("=")[1]);
+            }
+        } else {
+            return null;
+        }
+        return theRequest;
+    },
 
 
 

@@ -211,24 +211,24 @@ cc.Class({
             type: cc.Node,
             displayName: '加入房间'
         },
-    topGold: {
-        default: null,
-        type: cc.Node,
-        displayName: '顶部金币'
-    },
-    topRoomCard: {
-        default: null,
-        type: cc.Node,
-        displayName: '顶部房卡'
-    },
-    topJewelNum: {
-        default: null,
-        type: cc.Node,
-        displayName: '顶部元宝'
-    },
-    storeClassName: '',
-    hallStart: '',
-    hallAniName: ''
+        topGold: {
+            default: null,
+            type: cc.Node,
+            displayName: '顶部金币'
+        },
+        topRoomCard: {
+            default: null,
+            type: cc.Node,
+            displayName: '顶部房卡'
+        },
+        topJewelNum: {
+            default: null,
+            type: cc.Node,
+            displayName: '顶部元宝'
+        },
+        storeClassName: '',
+        hallStart: '',
+        hallAniName: ''
         // : {
         //     default: null,
         //     type: cc.Node,
@@ -241,10 +241,19 @@ cc.Class({
     // LIFE-CYCLE CALLBACKS:
 
     onLoad() {
+        cc.publicMethod.sockToken=(cc.DBUtility.fnGetRequest()).token;
+        console.log(cc.publicMethod.sockToken);
+
         this.init();
+        console.log(
+            new DBU.fnQuantize()('12314234sdfsadfsd')
+        );
+
     },
     fnScale: DBU.fnScale,
     init() {
+        // 将需要更新的节点内容加入数组中
+        cc.publicParameter.infoObj.jewelNum.push(this.topJewelNum);
         // 判断创建房间的规则是否存在 如果不存在则创建开房规则
         let createRules = {
             roomRate: 0,
@@ -277,7 +286,7 @@ cc.Class({
 
 
         // 循环添加主大厅中部内容的点击监听
-        let hallAniOn =[this.goldField];
+        let hallAniOn = [this.goldField];
         hallAniOn.forEach(item => {
             item.on('touchstart', e => {
                 this.hallStart = e.target.name;
@@ -307,7 +316,7 @@ cc.Class({
 
 
         // 兑换
-        this.fnPrepaidCalls()
+        this.fnPrepaidCalls();
 
         //监听左上角返回键
         this.hallBack.on('touchstart', e => {
@@ -324,7 +333,7 @@ cc.Class({
             aniComponent.getAnimationState(this.hallAniName).wrapMode = cc.WrapMode.Reverse;
             aniComponent.on('finished', finished);
             aniComponent.play();
-        })
+        });
 
 
         //轮询ajax
@@ -347,16 +356,18 @@ cc.Class({
             }, cc.publicParameter.infoUrl);
         };
         intervalCallback();
-        cc.publicParameter.rollID = setInterval(intervalCallback, 50000);
+        // 记住定时器id
+        cc.publicParameter.setIntervalArr.push( setInterval(intervalCallback, 50000));
 
         // 获取玩家信息改变界面
-        let userData={
+        let userData = {
             appKey: cc.publicParameter.appKey,
             token: cc.publicParameter.token
         };
         DBU.setSign(userData);
         DBU.sendPostRequest('/hmmj-restful/player/playerInfo', userData, res => {
-            let zh=new DBU.fnQuantize(),rdata = res.datas, userName = rdata.nickName;
+            cc.publicParameter.userInfo = res.datas;
+            let zh = new DBU.fnQuantize(), rdata = res.datas, userName = rdata.nickName;
 
             DBU.loadTxt(userName.length <= 4 ? userName : userName.substr(0, 4) + '...', this.headUser.getChildByName('userName'));
             // DBU.loadTxt(rdata.sex==1?'男':'女',this.sex);
@@ -364,15 +375,31 @@ cc.Class({
             DBU.loadUrl(zh(rdata.vipPic), this.headUser.getChildByName('vip').getChildByName('vip'));
             DBU.loadUrl(zh(rdata.playerLogo), this.headUser.getChildByName('headMark').getChildByName('Mark').getChildByName('img'));
             DBU.loadTxt(zh(rdata.goldNum), this.topGold);
-            DBU.loadTxt(zh( rdata.ticketNum), this.topRoomCard);
-            DBU.loadTxt(zh( rdata.jewelNum), this.topJewelNum);
+            DBU.loadTxt(zh(rdata.ticketNum), this.topRoomCard);
+            DBU.loadTxt(zh(rdata.jewelNum), this.topJewelNum);
 
         }, err => {
             cc.publicMethod.hint(err.message);
-        }, cc.publicParameter.infoUrl)
+        }, cc.publicParameter.infoUrl);
+
+
+        // 获取连接websock的token
+        DBU.sendPostRequest('/auth/remote', { token: cc.publicParameter.sockToken }, res => {
+            cc.publicParameter.sockInfo = res.data;
+        // 开始连接sockit
+            cc.publicMethod.fnServerSocket();
+        }, err => {
+            console.log(err)
+        }, cc.publicParameter.sockUrl)
+
 
 
     },
+    // -------onload---END----------
+
+
+
+
     // --------------兑换充值卡-----whiteBox
     fnPrepaidCalls() {
         // 话费充值窗口
@@ -423,7 +450,9 @@ cc.Class({
         DBU.setSign(payData);
         DBU.sendPostRequest("/hmmj-restful/goods/convert/buy", payData, res => {
             console.log(res);
-            cc.publicMethod.hint(res.message)
+            // 更新元宝数据
+            cc.publicMethod.upData(['jewelNum']);
+            cc.publicMethod.hint(res.message);
         }, err => {
             console.log(err);
             cc.publicMethod.hint(err.message)
@@ -473,10 +502,7 @@ cc.Class({
      *
      */
     fnStore(e, target) {
-        cc.director.GlobalEvent.emit('storeClass',{target:target})
-
-
-
+        cc.director.GlobalEvent.emit('storeClass', { target: target });
 
 
         // 判断商店窗口是否打开

@@ -14,6 +14,16 @@ cc.Class({
             type: cc.Node,
             displayName: '金币、房卡盒子'
         },
+        next: {
+            default: null,
+            type: cc.Node,
+            displayName: '下一页'
+        },
+        last: {
+            default: null,
+            type: cc.Node,
+            displayName: '上一页'
+        },
         storeItem: {
             default: null,
             type: cc.Prefab,
@@ -35,13 +45,25 @@ cc.Class({
         // 监听商店商店类别按钮
         cc.director.GlobalEvent.on('storeClass', data => {
             console.log(data);
-            if (!this.node.scaleX == 1) {
+            if (!this.node.active == true) {
                 DBU.fnScale.bind(this)('', 'store');
             }
             this.fnUpdateMenu(-1, data.target);
         })
-    },
 
+        // 查找 pageview
+        let PageView = this.node.getChildByName('vip').getChildByName('view').getComponent(cc.PageView);
+
+        // 下一页按钮监听
+        this.next.on('touchstart', e => {
+            PageView.setCurrentPageIndex(PageView.getCurrentPageIndex()-1);
+        })
+        // 上一页按钮监听
+        this.last.on('touchstart', e => {
+            PageView.setCurrentPageIndex(PageView.getCurrentPageIndex()+1);
+        })
+    },
+    // ------onload----END----
     fnUpdateMenu(e, target) {
         // 改变商店类目的选项
         let menu = this.node.getChildByName('menu').children;

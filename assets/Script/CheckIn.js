@@ -65,13 +65,14 @@ cc.Class({
                             console.log('点击了今日签到');
                             if (res.datas.daySignNum != 1) {
 
-                                let callBacks = (res) => {
+                                let callBacks = (resData) => {
                                     res.datas.daySignNum = 1;
                                     // 插入节点到指定的地方
                                     nowChild(true, i, item, e.target);
                                     isCheckIn = true;
                                     parent[1].getChildByName('lxqd').getComponent(cc.Animation).play('checkInLxqd');
                                     e.target.off('touchstart', callBacks);
+                                    cc.publicMethod.hint(resData.message);
                                 };
                                 // 发送签到请求
                                 DBU.sendPostRequest('/hmmj-restful/task/signInConfig/playerSignIn', data, callBacks, err => {

@@ -67,7 +67,7 @@ cc.Class({
         // 微信登录初始化
         
         AnySdk.init.bind(this)();
-
+        cc.publicMethod.hint(145456)
         // 预加载场景
         cc.director.preloadScene("Hall", function () {
             cc.log("主界面场景预加载完毕");
@@ -99,12 +99,7 @@ cc.Class({
             }
             cc.publicMethod.hint('请同意协议');
 
-            //    DBU.sendGetRequest('/ajax/services/feed/load',{q:'http://www.bilibili.tv'},res=>{
-            //         console.log('结果集',res);
-            //     },err=>{
-            //         console.log('错误集',err);
-
-            //     },'http://ajax.googleapis.com')
+           
 
         }
 
@@ -114,7 +109,10 @@ cc.Class({
 
 
         // 支付宝登录事件
-        this.alipay.on('touchstart', login)
+        this.alipay.on('touchstart',e=>{
+            // AnySdk.wxpay.bind(this)();
+            login();
+        })
 
 
         // 测试 promise
