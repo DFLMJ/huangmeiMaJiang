@@ -200,10 +200,10 @@ var DBUtility = {
         if (target.split(',').length > 1) {
             callBack();
         }
-        // console.log(this[target].active);
+        // console.log(,e,target,100009);
         if (!this[t1].active == true) {
             // this[t1].active=true;
-            console.log(6);
+            console.log(t1,'1');
             this[t1].active = true;
             this[t1].runAction(cc.sequence(cc.scaleTo(0.1, 1.1, 1.2), cc.scaleTo(0.1, 1, 1)));
             this.modalBg.active = true;
@@ -438,7 +438,7 @@ var DBUtility = {
     },
      
      /**
-      *工具方法：获取链接地址
+      *获取链接地址后面的参数
       *
       * @returns {Object} 
       */
@@ -458,6 +458,7 @@ var DBUtility = {
         }
         return theRequest;
     },
+
 
 
 

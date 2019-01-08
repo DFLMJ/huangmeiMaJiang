@@ -241,17 +241,23 @@ cc.Class({
     // LIFE-CYCLE CALLBACKS:
 
     onLoad() {
-        cc.publicMethod.sockToken=(cc.DBUtility.fnGetRequest()).token;
-        console.log(cc.publicMethod.sockToken);
+    //   eruda.get('console').config.set('overrideConsole', false);
 
         this.init();
         console.log(
             new DBU.fnQuantize()('12314234sdfsadfsd')
         );
 
+
+
+
     },
     fnScale: DBU.fnScale,
     init() {
+        cc.publicMethod.sockToken=(cc.DBUtility.fnGetRequest()).token;
+        console.log(cc.publicMethod.sockToken);
+
+
         // 将需要更新的节点内容加入数组中
         cc.publicParameter.infoObj.jewelNum.push(this.topJewelNum);
         // 判断创建房间的规则是否存在 如果不存在则创建开房规则
@@ -357,7 +363,7 @@ cc.Class({
         };
         intervalCallback();
         // 记住定时器id
-        cc.publicParameter.setIntervalArr.push( setInterval(intervalCallback, 50000));
+        cc.publicParameter.setIntervalArr.HALL.push( setInterval(intervalCallback, 50000));
 
         // 获取玩家信息改变界面
         let userData = {
@@ -370,8 +376,6 @@ cc.Class({
             let zh = new DBU.fnQuantize(), rdata = res.datas, userName = rdata.nickName;
 
             DBU.loadTxt(userName.length <= 4 ? userName : userName.substr(0, 4) + '...', this.headUser.getChildByName('userName'));
-            // DBU.loadTxt(rdata.sex==1?'男':'女',this.sex);
-            // DBU.loadTxt('ID:'+rdata.playerId,this.id);
             DBU.loadUrl(zh(rdata.vipPic), this.headUser.getChildByName('vip').getChildByName('vip'));
             DBU.loadUrl(zh(rdata.playerLogo), this.headUser.getChildByName('headMark').getChildByName('Mark').getChildByName('img'));
             DBU.loadTxt(zh(rdata.goldNum), this.topGold);
@@ -384,15 +388,16 @@ cc.Class({
 
 
         // 获取连接websock的token
-        DBU.sendPostRequest('/auth/remote', { token: cc.publicParameter.sockToken }, res => {
-            cc.publicParameter.sockInfo = res.data;
+        DBU.sendPostRequest('/auth/remote', { token: (cc.DBUtility.fnGetRequest()).token }, res => {
+            cc.publicParameter.sockData = res.data;
         // 开始连接sockit
-            cc.publicMethod.fnServerSocket();
+            cc.publicMethod.fnServerSocket.bind(this)();
         }, err => {
             console.log(err)
         }, cc.publicParameter.sockUrl)
 
 
+        
 
     },
     // -------onload---END----------
